@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaderboard</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Vz9PZQF11BtbT5F01FJFiWuggMLjt3E1W3+E3ZwF+V8x+fdCjTBQHn0aczYXMdTa8QBuN0PpbDyXlP6LlXk8Hg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        :root {
+            --bg: #0b1220;
+            --panel: rgba(255, 255, 255, 0.08);
+            --panel-border: rgba(255, 255, 255, 0.16);
+            --text: #ebf2ff;
+            --muted: rgba(235, 242, 255, 0.7);
+            --primary: #0d6efd;
+            --primary-2: #6610f2;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, rgba(13, 110, 253, 0.45), transparent 55%),
+                linear-gradient(180deg, #081427 0%, #060a11 100%);
+            color: var(--text);
+        }
+
+        header {
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            background: rgba(7, 11, 23, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 999px;
+            transition: background 0.18s ease, color 0.18s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text);
+        }
+
+        main {
+            padding: 32px 24px;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2.1rem;
+        }
+
+        .subtitle {
+            margin: 10px 0 24px;
+            color: var(--muted);
+            max-width: 620px;
+        }
+
+        .chart {
+            margin: 30px 0 22px;
+            padding: 24px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.32);
+            backdrop-filter: blur(14px);
+        }
+
+        .chart h2 {
+            margin: 0 0 14px;
+            font-size: 1.5rem;
+        }
+
+        .leaderboard {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+        }
+
+        .leaderboard th,
+        .leaderboard td {
+            padding: 16px 14px;
+            text-align: left;
+        }
+
+        .leaderboard th {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .leaderboard tbody tr:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .rank {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            width: fit-content;
+        }
+
+        .rank.gold {
+            background: rgba(255, 210, 0, 0.2);
+            color: #ffca28;
+        }
+
+        .rank.silver {
+            background: rgba(225, 225, 225, 0.18);
+            color: #e7e7e7;
+        }
+
+        .rank.bronze {
+            background: rgba(255, 165, 48, 0.18);
+            color: #ffb74d;
+        }
+
+        .rank.normal {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+        }
+
+        .leaderboard td span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .leaderboard .score {
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .leaderboard .progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .leaderboard .progress-inner {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+        }
+
+        .empty-state {
+            padding: 48px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .empty-state h2 {
+            margin: 0 0 12px;
+            font-size: 1.7rem;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 24px 0 0;
+        }
+
+        .button-row a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            border-radius: 999px;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 18px 36px rgba(9, 101, 212, 0.35);
+        }
+
+        @media (max-width: 780px) {
+            .leaderboard {
+                min-width: 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../common/theme.css" />
+    <script src="../common/theme.js" defer></script>
+</head>
+<body>
+
+<header>
+    <a href="studenthome.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to dashboard</a>
+    <div class="brand">Leaderboard</div>
+</header>
+
+<main>
+    <div class="page-title">
+        <div>
+            <h1>Top Performers</h1>
+            <p class="subtitle">See the top ranks and where you stand among your peers.</p>
+        </div>
+        <div class="button-row">
+            <a href="#"><i class="fa-solid fa-rotate"></i> Refresh</a>
+            <a href="#"><i class="fa-solid fa-download"></i> Export CSV</a>
+        </div>
+    </div>
+
+    <section class="chart">
+        <h2>Top 5 Scores</h2>
+        <div class="leaderboard">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Student</th>
+                        <th>Score</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="rank gold"><i class="fa-solid fa-medal"></i> 1</span></td>
+                        <td>Jane Doe</td>
+                        <td><span class="score">98%</span></td>
+                        <td>
+                            <div class="progress"><div class="progress-inner" style="width: 98%;"></div></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank silver"><i class="fa-solid fa-medal"></i> 2</span></td>
+                        <td>John Smith</td>
+                        <td><span class="score">96%</span></td>
+                        <td>
+                            <div class="progress"><div class="progress-inner" style="width: 96%;"></div></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank bronze"><i class="fa-solid fa-medal"></i> 3</span></td>
+                        <td>Lisa Chen</td>
+                        <td><span class="score">93%</span></td>
+                        <td>
+                            <div class="progress"><div class="progress-inner" style="width: 93%;"></div></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank normal">4</span></td>
+                        <td>Aaron Patel</td>
+                        <td><span class="score">89%</span></td>
+                        <td>
+                            <div class="progress"><div class="progress-inner" style="width: 89%;"></div></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="rank normal">5</span></td>
+                        <td>Maria Lopez</td>
+                        <td><span class="score">86%</span></td>
+                        <td>
+                            <div class="progress"><div class="progress-inner" style="width: 86%;"></div></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <h2>No leaderboard data yet</h2>
+            <p>Once students begin completing exams, rankings will appear here.</p>
+            <div class="button-row">
+                <a href="#"><i class="fa-solid fa-pen-to-square"></i> Take a test</a>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    const emptyState = document.getElementById('emptyState');
+
+    function updateEmptyState() {
+        const rows = document.querySelectorAll('.leaderboard tbody tr');
+        emptyState.style.display = rows.length ? 'none' : 'block';
+    }
+
+    updateEmptyState();
+</script>
+</body>
+</html>

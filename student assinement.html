@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Assignments</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Vz9PZQF11BtbT5F01FJFiWuggMLjt3E1W3+E3ZwF+V8x+fdCjTBQHn0aczYXMdTa8QBuN0PpbDyXlP6LlXk8Hg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        :root {
+            --bg: #0b1220;
+            --panel: rgba(255, 255, 255, 0.08);
+            --panel-border: rgba(255, 255, 255, 0.16);
+            --text: #ebf2ff;
+            --muted: rgba(235, 242, 255, 0.7);
+            --primary: #0d6efd;
+            --primary-2: #6610f2;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, rgba(13, 110, 253, 0.45), transparent 55%),
+                linear-gradient(180deg, #081427 0%, #060a11 100%);
+            color: var(--text);
+        }
+
+        header {
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            background: rgba(7, 11, 23, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 999px;
+            transition: background 0.18s ease, color 0.18s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text);
+        }
+
+        main {
+            padding: 32px 24px;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2.1rem;
+        }
+
+        .subtitle {
+            margin: 10px 0 24px;
+            color: var(--muted);
+            max-width: 620px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 18px;
+            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.32);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 780px;
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.02em;
+        }
+
+        td {
+            color: rgba(235, 242, 255, 0.88);
+        }
+
+        .label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .label.due {
+            background: rgba(255, 210, 0, 0.18);
+            color: #f8c032;
+        }
+
+        .label.submitted {
+            background: rgba(0, 195, 118, 0.2);
+            color: #00c376;
+        }
+
+        .label.late {
+            background: rgba(255, 75, 75, 0.15);
+            color: #ff6767;
+        }
+
+        .actions a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        .actions a:hover {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .empty-state {
+            padding: 48px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .empty-state h2 {
+            margin: 0 0 12px;
+            font-size: 1.7rem;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 24px 0 0;
+        }
+
+        .button-row a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            border-radius: 999px;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 18px 36px rgba(9, 101, 212, 0.35);
+        }
+
+        @media (max-width: 780px) {
+            .table-wrap {
+                min-width: 0;
+            }
+        }
+
+        /* Modal for submission input */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: grid;
+            place-items: center;
+            padding: 22px;
+            z-index: 50;
+        }
+
+        .modal-content {
+            width: min(520px, 100%);
+            background: rgba(20, 26, 40, 0.96);
+            border-radius: 18px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
+        }
+
+        .modal-content h2 {
+            margin: 0 0 12px;
+        }
+
+        .modal-content label {
+            display: grid;
+            gap: 8px;
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .modal-content textarea,
+        .modal-content input[type="file"] {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.09);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .modal-content textarea:focus,
+        .modal-content input[type="file"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+            border-color: rgba(13, 110, 253, 0.55);
+        }
+    </style>
+    <link rel="stylesheet" href="../common/theme.css" />
+    <script src="../common/theme.js" defer></script>
+</head>
+<body>
+
+<header>
+    <a href="studenthome.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to dashboard</a>
+    <div class="brand">Assignments</div>
+</header>
+
+<main>
+    <div class="page-title">
+        <div>
+            <h1>Your Assignments</h1>
+            <p class="subtitle">View upcoming tasks, submit files, and check due dates.</p>
+        </div>
+        <div class="button-row">
+            <a href="#"><i class="fa-solid fa-rotate"></i> Refresh</a>
+            <a href="#"><i class="fa-solid fa-file-arrow-down"></i> Download all</a>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Subject</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Submission</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="assignmentBody"></tbody>
+        </table>
+
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <h2>No assignments yet</h2>
+            <p>You're all caught up! New assignments will show up here when your instructor posts them.</p>
+            <div class="button-row">
+                <a href="#"><i class="fa-solid fa-rotate"></i> Refresh</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="submissionModal" style="display: none;">
+        <div class="modal-content">
+            <h2>Submit assignment</h2>
+            <p class="subtitle" id="modalAssignmentTitle"></p>
+
+            <label>
+                Notes or link (optional)
+                <textarea id="submissionNotes" rows="4" placeholder="Add a brief description or link to your solution"></textarea>
+            </label>
+
+            <label>
+                Attach PDF (optional)
+                <input id="submissionFile" type="file" accept="application/pdf" />
+            </label>
+
+            <div class="button-row" style="justify-content: flex-end; margin-top: 12px;">
+                <a href="#" id="cancelSubmission" class="btn" style="background: rgba(255,255,255,0.12);">Cancel</a>
+                <a href="#" id="saveSubmission" class="btn" style="background: linear-gradient(135deg, var(--primary), var(--primary-2));">Save</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    const assignmentBody = document.getElementById('assignmentBody');
+    const emptyState = document.getElementById('emptyState');
+
+    const submissionModal = document.getElementById('submissionModal');
+    const modalAssignmentTitle = document.getElementById('modalAssignmentTitle');
+    const submissionNotes = document.getElementById('submissionNotes');
+    const submissionFile = document.getElementById('submissionFile');
+    const cancelSubmission = document.getElementById('cancelSubmission');
+    const saveSubmission = document.getElementById('saveSubmission');
+
+    let currentAssignmentId = null;
+
+    function getStudentName() {
+        const stored = localStorage.getItem('smartexam_studentName');
+        if (stored) return stored;
+        const name = prompt('Enter your name for assignment tracking:', 'Student');
+        if (name && name.trim()) {
+            localStorage.setItem('smartexam_studentName', name.trim());
+            return name.trim();
+        }
+        return 'Student';
+    }
+
+    const studentName = getStudentName();
+
+    function loadAssignments() {
+        return JSON.parse(localStorage.getItem('smartexam_assignments') || '[]');
+    }
+
+    function loadSubmissions() {
+        return JSON.parse(localStorage.getItem('smartexam_submissions') || '[]');
+    }
+
+    function saveSubmissions(submissions) {
+        localStorage.setItem('smartexam_submissions', JSON.stringify(submissions));
+    }
+
+    function formatDate(iso) {
+        const d = new Date(iso);
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function render() {
+        const assignments = loadAssignments();
+        const submissions = loadSubmissions();
+
+        assignmentBody.innerHTML = '';
+
+        if (!assignments.length) {
+            emptyState.style.display = 'block';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+
+        assignments.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)).forEach(a => {
+            const submission = submissions.find(s => s.assignmentId === a.id && s.student === studentName);
+            const dueDate = new Date(a.dueDate);
+            const now = new Date();
+            const isLate = submission && new Date(submission.submittedAt) > dueDate;
+            const status = submission ? (isLate ? 'late' : 'submitted') : (now > dueDate ? 'late' : 'due');
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${a.title}</td>
+                <td>${a.subject}</td>
+                <td>${formatDate(a.dueDate)}</td>
+                <td><span class="label ${status}"><i class="fa-solid ${status === 'due' ? 'fa-clock' : status === 'submitted' ? 'fa-check' : 'fa-exclamation-triangle'}"></i> ${status === 'due' ? 'Due' : status === 'submitted' ? 'Submitted' : 'Late'}</span></td>
+                <td>${submission ? formatDate(submission.submittedAt) : '—'}</td>
+                <td class="actions">
+                    <a href="#" data-id="${a.id}" class="action-btn">${submission ? 'View' : 'Submit'}</a>
+                </td>
+            `;
+
+            row.querySelector('.action-btn').addEventListener('click', e => {
+                e.preventDefault();
+                if (submission) {
+                    const fileInfo = submission.fileName ? `\n\nFile: ${submission.fileName}` : '';
+                    alert(`Submitted on ${formatDate(submission.submittedAt)}.\n\nNotes: ${submission.notes || '—'}${fileInfo}`);
+                    return;
+                }
+
+                openSubmissionModal(a);
+            });
+
+            assignmentBody.appendChild(row);
+        });
+    }
+
+    document.querySelector('.button-row a[href="#"]').addEventListener('click', e => {
+        e.preventDefault();
+        render();
+    });
+
+    render();
+
+    function openSubmissionModal(assignment) {
+        currentAssignmentId = assignment.id;
+        modalAssignmentTitle.textContent = assignment.title;
+        submissionNotes.value = '';
+        submissionFile.value = '';
+        submissionModal.style.display = 'grid';
+    }
+
+    function closeSubmissionModal() {
+        submissionModal.style.display = 'none';
+        currentAssignmentId = null;
+    }
+
+    function readFileAsBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    saveSubmission.addEventListener('click', async (event) => {
+        event.preventDefault();
+        if (currentAssignmentId === null) return;
+
+        let fileData = null;
+        let fileName = '';
+        if (submissionFile.files.length) {
+            const file = submissionFile.files[0];
+            fileName = file.name;
+            fileData = await readFileAsBase64(file);
+        }
+
+        const newSubmission = {
+            id: Date.now(),
+            assignmentId: currentAssignmentId,
+            student: studentName,
+            submittedAt: new Date().toISOString(),
+            notes: submissionNotes.value.trim(),
+            fileName,
+            fileData,
+        };
+
+        const submissions = loadSubmissions();
+        submissions.push(newSubmission);
+        saveSubmissions(submissions);
+        render();
+        closeSubmissionModal();
+    });
+
+    cancelSubmission.addEventListener('click', (event) => {
+        event.preventDefault();
+        closeSubmissionModal();
+    });
+</script>
+</body>
+</html>
