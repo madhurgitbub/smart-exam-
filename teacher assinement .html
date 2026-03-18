@@ -1,564 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Manage Assignments</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Vz9PZQF11BtbT5F01FJFiWuggMLjt3E1W3+E3ZwF+V8x+fdCjTBQHn0aczYXMdTa8QBuN0PpbDyXlP6LlXk8Hg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Assignments - Teacher</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
-            --bg: #0b1220;
-            --panel: rgba(255, 255, 255, 0.08);
-            --panel-border: rgba(255, 255, 255, 0.16);
+            --bg: #060a11;
+            --nav-bg: rgba(11, 18, 32, 0.8);
+            --panel: rgba(255, 255, 255, 0.05);
             --text: #ebf2ff;
-            --muted: rgba(235, 242, 255, 0.7);
-            --primary: #0d6efd;
-            --primary-2: #6610f2;
-        }
-
-        * {
-            box-sizing: border-box;
+            --text-muted: #94a3b8;
+            --primary: #2563eb; 
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: radial-gradient(circle at top, rgba(13, 110, 253, 0.45), transparent 55%),
-                linear-gradient(180deg, #081427 0%, #060a11 100%);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
             color: var(--text);
         }
 
-        header {
-            padding: 18px 24px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        /* Top Navigation Bar */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: var(--nav-bg);
             backdrop-filter: blur(10px);
-            background: rgba(7, 11, 23, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .brand {
-            font-size: 1.35rem;
-            font-weight: 700;
-            letter-spacing: 0.4px;
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--muted);
-            font-weight: 600;
+        .nav-left a {
+            color: var(--text-muted);
             text-decoration: none;
-            padding: 10px 14px;
-            border-radius: 999px;
-            transition: background 0.18s ease, color 0.18s ease;
-        }
-
-        .back-link:hover {
-            background: rgba(255, 255, 255, 0.12);
-            color: var(--text);
-        }
-
-        main {
-            padding: 32px 24px;
-            max-width: 980px;
-            margin: 0 auto;
-        }
-
-        .page-title {
+            font-size: 0.9rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            gap: 18px;
-            flex-wrap: wrap;
+            gap: 0.5rem;
+            transition: color 0.2s;
         }
 
-        .page-title h1 {
-            margin: 0;
-            font-size: 2.1rem;
+        .nav-left a:hover { color: var(--text-main); }
+
+        .nav-right { font-weight: 600; font-size: 0.9rem; color: var(--text-muted); }
+
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+
+        h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 5px; }
+        .subtitle { color: rgba(255,255,255,0.6); margin-bottom: 30px; }
+
+        .btn-refresh {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+            transition: 0.2s;
         }
 
-        .subtitle {
-            margin: 10px 0 24px;
-            color: var(--muted);
-            max-width: 620px;
-        }
+        .btn-refresh:hover { transform: translateY(-1px); opacity: 0.9; }
 
         .card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            border-radius: 18px;
-            padding: 24px;
-            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.32);
-            backdrop-filter: blur(14px);
-            margin-top: 32px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
         }
 
-        .form-grid {
-            display: grid;
-            gap: 18px;
-        }
-
-        label {
-            display: grid;
-            gap: 8px;
-            font-weight: 600;
-            color: var(--muted);
-        }
-
-        input,
-        select,
-        textarea {
+        input, textarea {
             width: 100%;
-            padding: 12px 14px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            background: rgba(255, 255, 255, 0.09);
-            color: var(--text);
-            font-size: 1rem;
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
-            border-color: rgba(13, 110, 253, 0.55);
-        }
-
-        .actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 18px;
-        }
-
-        .btn {
-            padding: 12px 18px;
-            border-radius: 999px;
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.18s ease, box-shadow 0.18s ease;
-        }
-
-        .btn.primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            padding: 14px;
+            margin: 10px 0 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(0,0,0,0.2);
             color: white;
-            box-shadow: 0 14px 30px rgba(9, 101, 212, 0.35);
-        }
-
-        .btn.primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 18px 34px rgba(9, 101, 212, 0.4);
-        }
-
-        .btn.secondary {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--text);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-
-        .btn.secondary:hover {
-            background: rgba(255, 255, 255, 0.14);
-        }
-
-        .table-wrap {
-            overflow-x: auto;
-            border-radius: 18px;
-            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.32);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            background: rgba(255, 255, 255, 0.05);
-            margin-top: 26px;
+            box-sizing: border-box;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 780px;
-        }
-
-        thead {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        th,
-        td {
-            padding: 14px 16px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+            font-size: 0.95rem;
+            background: var(--panel);
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         th {
-            font-weight: 700;
-            color: var(--muted);
-            letter-spacing: 0.02em;
+            text-align: left;
+            padding: 15px;
+            color: rgba(255,255,255,0.5);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
         }
 
         td {
-            color: rgba(235, 242, 255, 0.88);
+            padding: 18px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .empty-state {
-            padding: 48px;
-            text-align: center;
-            color: var(--muted);
+        .btn-view {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border-radius: 8px;
+            padding: 6px 16px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
         }
 
-        .empty-state h2 {
-            margin: 0 0 12px;
-            font-size: 1.7rem;
-        }
-
-        @media (max-width: 780px) {
-            .table-wrap {
-                min-width: 0;
-            }
-
-            table {
-                min-width: 0;
-            }
-        }
-
-        /* PDF preview modal */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: grid;
-            place-items: center;
-            padding: 22px;
-            z-index: 50;
-        }
-
-        .modal-content {
-            width: min(92vw, 920px);
-            height: min(92vh, 680px);
-            background: rgba(20, 26, 40, 0.96);
-            border-radius: 18px;
-            padding: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
-            display: grid;
-            grid-template-rows: auto 1fr;
-            gap: 14px;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .pdf-container {
-            border-radius: 14px;
-            overflow: hidden;
-            background: rgba(0, 0, 0, 0.65);
-        }
-
-        .pdf-container iframe {
-            width: 100%;
-            height: 100%;
-        }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; place-items: center; z-index: 1000; }
+        .modal-content { background: #0f172a; padding: 30px; border-radius: 20px; width: 80%; max-width: 800px; max-height: 80vh; border: 1px solid #334155; overflow-y: auto; }
     </style>
-    <link rel="stylesheet" href="../common/theme.css" />
-    <script src="../common/theme.js" defer></script>
 </head>
 <body>
 
-<header>
-    <a href="teacher home .html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to dashboard</a>
-    <div class="brand">Manage Assignments</div>
-</header>
-
-<main>
-    <div class="page-title">
-        <div>
-            <h1>Your Assignments</h1>
-            <p class="subtitle">Create assignments for students and set due dates.</p>
-        </div>
-        <div class="button-row">
-            <a href="#" id="refresh"><i class="fa-solid fa-rotate"></i> Refresh</a>
-        </div>
+<nav class="nav-bar">
+    <div class="nav-left">
+        <a href="teacher home .html"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
     </div>
+    <div class="nav-right">
+        <i class="fa-solid fa-chalkboard-user"></i> Teacher Panel
+    </div>
+</nav>
 
+<div class="container">
+    <h1>Your Assignments</h1>
+    <p class="subtitle">Create and manage student tasks.</p>
+    
     <div class="card">
-        <form id="assignmentForm" autocomplete="off">
-            <div class="form-grid">
-                <label>
-                    Title
-                    <input type="text" name="title" placeholder="e.g. Algebra Practice" required />
-                </label>
-
-                <label>
-                    Subject
-                    <input type="text" name="subject" placeholder="Mathematics" required />
-                </label>
-
-                <label>
-                    Due date
-                    <input type="date" name="dueDate" required />
-                </label>
-
-                <label>
-                    Description
-                    <textarea name="description" placeholder="Add instructions or resources for students..."></textarea>
-                </label>
+        <form id="assignmentForm">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <input type="text" name="title" placeholder="Assignment Title" required>
+                <input type="text" name="subject" placeholder="Subject" required>
             </div>
-
-            <div class="actions">
-                <button class="btn primary" type="submit"><i class="fa-solid fa-save"></i> Save assignment</button>
-            </div>
+            <input type="date" name="dueDate" required>
+            <textarea name="description" placeholder="Description/Instructions for students..." rows="3"></textarea>
+            <button type="submit" class="btn-refresh">Save Assignment</button>
         </form>
-
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Subject</th>
-                        <th>Due</th>
-                        <th>Submissions</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="assignmentList"></tbody>
-            </table>
-        </div>
-
-        <div class="submission-panel" id="submissionPanel" style="display:none;">
-            <div class="card">
-                <div class="page-title">
-                    <div>
-                        <h1>Submissions</h1>
-                        <p class="subtitle" id="submissionSubtitle"></p>
-                    </div>
-                    <div class="button-row">
-                        <a href="#" id="closeSubmissions"><i class="fa-solid fa-times"></i> Close</a>
-                    </div>
-                </div>
-                <div class="table-wrap" style="margin-top: 0;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Student</th>
-                                <th>Submitted</th>
-                                <th>Status</th>
-                                <th>File</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody id="submissionList"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal" id="pdfModal" style="display:none;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Preview PDF</h2>
-                    <button id="closePdfModal" class="btn" style="background: rgba(255,255,255,0.12);">Close</button>
-                </div>
-                <div class="pdf-container">
-                    <iframe id="pdfViewer" src="" frameborder="0" style="width:100%; height:100%;"></iframe>
-                </div>
-            </div>
-        </div>
-
-        <div class="empty-state" id="emptyState" style="display:none;">
-            <h2>No assignments yet</h2>
-            <p>Create an assignment and it will appear here for students to complete.</p>
-        </div>
     </div>
-</main>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 10px;">
+        <h2 style="margin:0">Recent Assignments</h2>
+        <button class="btn-refresh" onclick="render()">Refresh</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Subject</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Submission</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="teacherTable"></tbody>
+    </table>
+</div>
+
+<div id="subModal" class="modal">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+            <h3 style="margin:0">Student Submissions</h3>
+            <button onclick="closeSubModal()" class="btn-view">Close</button>
+        </div>
+        <div id="subList" style="margin-top:20px;"></div>
+    </div>
+</div>
 
 <script>
-    const assignmentForm = document.getElementById('assignmentForm');
-    const assignmentList = document.getElementById('assignmentList');
-    const emptyState = document.getElementById('emptyState');
-    const refreshBtn = document.getElementById('refresh');
+    const getAssign = () => JSON.parse(localStorage.getItem('smartexam_assignments') || '[]');
+    const getSubs = () => JSON.parse(localStorage.getItem('smartexam_submissions') || '[]');
 
-    const submissionPanel = document.getElementById('submissionPanel');
-    const submissionSubtitle = document.getElementById('submissionSubtitle');
-    const submissionList = document.getElementById('submissionList');
-    const closeSubmissionsBtn = document.getElementById('closeSubmissions');
-
-    function loadAssignments() {
-        return JSON.parse(localStorage.getItem('smartexam_assignments') || '[]');
-    }
-
-    function saveAssignments(assignments) {
+    document.getElementById('assignmentForm').onsubmit = (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const assignments = getAssign();
+        assignments.push({
+            id: Date.now(),
+            title: fd.get('title'),
+            subject: fd.get('subject'),
+            dueDate: fd.get('dueDate'),
+            description: fd.get('description')
+        });
         localStorage.setItem('smartexam_assignments', JSON.stringify(assignments));
+        e.target.reset();
+        render();
+    };
+
+    function showSubs(id) {
+        const subs = getSubs().filter(s => s.assignmentId == id);
+        const list = document.getElementById('subList');
+        list.innerHTML = subs.length ? '' : '<p style="color:gray; text-align:center; padding: 20px;">No submissions yet.</p>';
+        subs.forEach(s => {
+            list.innerHTML += `<div style="padding:15px; border-bottom:1px solid #334155; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong style="font-size: 1.1rem;">${s.student}</strong><br>
+                    <small style="color: var(--text-muted)">Submitted on: ${s.submittedAt || 'N/A'}</small>
+                </div>
+                <a href="data:application/pdf;base64,${s.fileData}" download="${s.fileName}" class="btn-view" style="text-decoration: none; background: var(--primary);">Download PDF</a>
+            </div>`;
+        });
+        document.getElementById('subModal').style.display = 'grid';
     }
 
-    function loadSubmissions() {
-        return JSON.parse(localStorage.getItem('smartexam_submissions') || '[]');
-    }
-
-    function saveSubmissions(submissions) {
-        localStorage.setItem('smartexam_submissions', JSON.stringify(submissions));
-    }
-
-    function formatDate(iso) {
-        if (!iso) return '—';
-        const date = new Date(iso);
-        return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-    }
-
-    function showSubmissionsFor(assignment, submissions) {
-        const assignmentSubs = submissions.filter(s => s.assignmentId === assignment.id);
-        submissionSubtitle.textContent = `${assignment.title} — due ${formatDate(assignment.dueDate)}`;
-        submissionList.innerHTML = '';
-
-        if (!assignmentSubs.length) {
-            submissionList.innerHTML = `
-                <tr>
-                    <td colspan="5" style="text-align:center; padding: 24px; color: var(--muted);">No submissions yet.</td>
-                </tr>
-            `;
-        } else {
-            assignmentSubs.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).forEach(sub => {
-                const due = new Date(assignment.dueDate);
-                const submitted = new Date(sub.submittedAt);
-                const isLate = submitted > due;
-                submissionList.insertAdjacentHTML('beforeend', `
-                    <tr>
-                        <td>${sub.student}</td>
-                        <td>${formatDate(sub.submittedAt)}</td>
-                        <td><span class="label ${isLate ? 'late' : 'submitted'}">${isLate ? 'Late' : 'On time'}</span></td>
-                        <td>
-                            ${sub.fileName ? `<a href="data:application/pdf;base64,${sub.fileData}" download="${sub.fileName}">${sub.fileName}</a>` : '—'}
-                            ${sub.fileName ? `<button class="btn preview-pdf" type="button">Preview</button>` : ''}
-                        </td>
-                        <td>${sub.notes ? sub.notes : '—'}</td>
-                    </tr>
-                `);
-
-                if (sub.fileName) {
-                    const row = submissionList.lastElementChild;
-                    const previewBtn = row.querySelector('.preview-pdf');
-                    if (previewBtn) {
-                        previewBtn.addEventListener('click', () => {
-                            openPdfModal(sub.fileName, sub.fileData);
-                        });
-                    }
-                }
-            });
-        }
-
-        submissionPanel.style.display = 'block';
-        submissionPanel.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    closeSubmissionsBtn.addEventListener('click', e => {
-        e.preventDefault();
-        submissionPanel.style.display = 'none';
-    });
-
-    const pdfModal = document.getElementById('pdfModal');
-    const pdfViewer = document.getElementById('pdfViewer');
-    const closePdfModal = document.getElementById('closePdfModal');
-
-    function openPdfModal(fileName, base64Data) {
-        pdfViewer.src = `data:application/pdf;base64,${base64Data}`;
-        pdfModal.style.display = 'grid';
-    }
-
-    closePdfModal.addEventListener('click', (e) => {
-        e.preventDefault();
-        pdfModal.style.display = 'none';
-        pdfViewer.src = '';
-    });
+    const closeSubModal = () => document.getElementById('subModal').style.display = 'none';
 
     function render() {
-        const assignments = loadAssignments();
-        const submissions = loadSubmissions();
+        const table = document.getElementById('teacherTable');
+        const subs = getSubs();
+        const assignments = getAssign();
 
-        assignmentList.innerHTML = '';
-
-        if (!assignments.length) {
-            emptyState.style.display = 'block';
+        if (assignments.length === 0) {
+            table.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-muted)">No assignments created yet.</td></tr>';
             return;
         }
 
-        emptyState.style.display = 'none';
-
-        assignments.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)).forEach(assignment => {
-            const submittedCount = submissions.filter(s => s.assignmentId === assignment.id).length;
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${assignment.title}</td>
-                <td>${assignment.subject}</td>
-                <td>${formatDate(assignment.dueDate)}</td>
-                <td>${submittedCount}</td>
-                <td>
-                    <button class="btn secondary" data-id="${assignment.id}" data-action="submissions">View</button>
-                    <button class="btn secondary" data-id="${assignment.id}" data-action="delete">Delete</button>
-                </td>
-            `;
-
-            row.querySelectorAll('button').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const action = btn.dataset.action;
-                    if (action === 'delete') {
-                        if (!confirm('Delete this assignment? This will remove it for all students.')) return;
-                        const filtered = assignments.filter(a => a.id !== assignment.id);
-                        saveAssignments(filtered);
-
-                        const remainingSubmissions = submissions.filter(s => s.assignmentId !== assignment.id);
-                        saveSubmissions(remainingSubmissions);
-
-                        render();
-                    } else if (action === 'submissions') {
-                        showSubmissionsFor(assignment, submissions);
-                    }
-                });
-            });
-
-            assignmentList.appendChild(row);
-        });
+        table.innerHTML = assignments.map(a => {
+            const subCount = subs.filter(s => s.assignmentId == a.id).length;
+            return `
+            <tr>
+                <td style="font-weight:600">${a.title}</td>
+                <td><span style="color:var(--text-muted)">${a.subject}</span></td>
+                <td>${a.dueDate}</td>
+                <td><span style="background:rgba(16, 185, 129, 0.1); color: #10b981; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:bold; border: 1px solid rgba(16, 185, 129, 0.2);">ACTIVE</span></td>
+                <td>${subCount} Submissions</td>
+                <td><button class="btn-view" onclick="showSubs(${a.id})">View Subs</button></td>
+            </tr>`;
+        }).join('');
     }
 
-    assignmentForm.addEventListener('submit', event => {
-        event.preventDefault();
-        const formData = new FormData(assignmentForm);
-        const assignment = {
-            id: Date.now(),
-            title: formData.get('title').trim(),
-            subject: formData.get('subject').trim(),
-            dueDate: formData.get('dueDate'),
-            description: formData.get('description').trim(),
-            createdAt: new Date().toISOString(),
-        };
-
-        const assignments = loadAssignments();
-        assignments.push(assignment);
-        saveAssignments(assignments);
-
-        assignmentForm.reset();
-        render();
-    });
-
-    refreshBtn.addEventListener('click', event => {
-        event.preventDefault();
-        render();
-    });
-
     render();
+
+    // Close modal on outside click
+    window.onclick = function(event) {
+        const modal = document.getElementById('subModal');
+        if (event.target == modal) closeSubModal();
+    }
 </script>
 </body>
 </html>
