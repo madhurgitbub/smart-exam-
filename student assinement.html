@@ -1,479 +1,300 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Assignments</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Vz9PZQF11BtbT5F01FJFiWuggMLjt3E1W3+E3ZwF+V8x+fdCjTBQHn0aczYXMdTa8QBuN0PpbDyXlP6LlXk8Hg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Assignments</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #0b1220;
-            --panel: rgba(255, 255, 255, 0.08);
-            --panel-border: rgba(255, 255, 255, 0.16);
-            --text: #ebf2ff;
-            --muted: rgba(235, 242, 255, 0.7);
-            --primary: #0d6efd;
-            --primary-2: #6610f2;
-        }
-
-        * {
-            box-sizing: border-box;
+            --bg-dark: #060a11;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent-blue: #2b59ff;
+            --text-main: #ebf2ff;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: rgba(255, 255, 255, 0.1);
         }
 
         body {
             margin: 0;
-            min-height: 100vh;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: radial-gradient(circle at top, rgba(13, 110, 253, 0.45), transparent 55%),
-                linear-gradient(180deg, #081427 0%, #060a11 100%);
-            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.5;
         }
 
-        header {
-            padding: 18px 24px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        /* Top Navigation Bar */
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(11, 18, 32, 0.8);
             backdrop-filter: blur(10px);
-            background: rgba(7, 11, 23, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .brand {
-            font-size: 1.35rem;
-            font-weight: 700;
-            letter-spacing: 0.4px;
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--muted);
-            font-weight: 600;
+        .nav-left a {
+            color: var(--text-muted);
             text-decoration: none;
-            padding: 10px 14px;
-            border-radius: 999px;
-            transition: background 0.18s ease, color 0.18s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
         }
 
-        .back-link:hover {
-            background: rgba(255, 255, 255, 0.12);
-            color: var(--text);
+        .nav-left a:hover { color: var(--text-main); }
+
+        .nav-right { font-weight: 600; font-size: 0.9rem; }
+
+        /* Main Content Container */
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1rem;
         }
 
-        main {
-            padding: 32px 24px;
-            max-width: 980px;
-            margin: 0 auto;
-        }
-
-        .page-title {
+        .header-section {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 18px;
-            flex-wrap: wrap;
+            margin-bottom: 2rem;
         }
 
-        .page-title h1 {
-            margin: 0;
-            font-size: 2.1rem;
+        h2 { font-size: 1.8rem; margin: 0; font-weight: 700; }
+
+        .btn-refresh {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(43, 89, 255, 0.3);
+            transition: transform 0.2s, background 0.2s;
         }
 
-        .subtitle {
-            margin: 10px 0 24px;
-            color: var(--muted);
-            max-width: 620px;
+        .btn-refresh:hover {
+            background: #1e46d9;
+            transform: translateY(-1px);
         }
 
-        .table-wrap {
-            overflow-x: auto;
-            border-radius: 18px;
-            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.32);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            background: rgba(255, 255, 255, 0.05);
+        /* Table Styling */
+        .table-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 780px;
-        }
-
-        thead {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        th,
-        td {
-            padding: 14px 16px;
             text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         th {
-            font-weight: 700;
-            color: var(--muted);
-            letter-spacing: 0.02em;
+            background: rgba(255,255,255,0.02);
+            padding: 1.2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
         }
 
         td {
-            color: rgba(235, 242, 255, 0.88);
+            padding: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.95rem;
         }
 
-        .label {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 10px;
-            border-radius: 999px;
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* Modern Status Pills */
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
             font-weight: 700;
-            font-size: 0.9rem;
+            text-transform: uppercase;
         }
+        .status.submitted { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .status.late { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .status.pending { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--border); }
 
-        .label.due {
-            background: rgba(255, 210, 0, 0.18);
-            color: #f8c032;
+        /* Action Buttons */
+        .btn-action {
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: 0.2s;
         }
+        .btn-view { background: #334155; color: white; }
+        .btn-view:hover { background: #475569; }
 
-        .label.submitted {
-            background: rgba(0, 195, 118, 0.2);
-            color: #00c376;
-        }
-
-        .label.late {
-            background: rgba(255, 75, 75, 0.15);
-            color: #ff6767;
-        }
-
-        .actions a {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 14px;
-            border-radius: 999px;
-            text-decoration: none;
-            background: rgba(255, 255, 255, 0.12);
-            color: var(--text);
-            font-weight: 700;
-        }
-
-        .actions a:hover {
-            background: rgba(255, 255, 255, 0.18);
-        }
-
-        .empty-state {
-            padding: 48px;
-            text-align: center;
-            color: var(--muted);
-        }
-
-        .empty-state h2 {
-            margin: 0 0 12px;
-            font-size: 1.7rem;
-        }
-
-        .button-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin: 24px 0 0;
-        }
-
-        .button-row a {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 18px;
-            border-radius: 999px;
-            text-decoration: none;
-            background: linear-gradient(135deg, var(--primary), var(--primary-2));
-            color: white;
-            font-weight: 700;
-            box-shadow: 0 18px 36px rgba(9, 101, 212, 0.35);
-        }
-
-        @media (max-width: 780px) {
-            .table-wrap {
-                min-width: 0;
-            }
-        }
-
-        /* Modal for submission input */
+        /* Modal Design */
         .modal {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.55);
-            display: grid;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
             place-items: center;
-            padding: 22px;
-            z-index: 50;
+            z-index: 1000;
         }
-
         .modal-content {
-            width: min(520px, 100%);
-            background: rgba(20, 26, 40, 0.96);
-            border-radius: 18px;
-            padding: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
+            background: #111827;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            border: 1px solid var(--border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        .modal-content h2 {
-            margin: 0 0 12px;
-        }
+        hr { border: 0; border-top: 1px solid var(--border); margin: 1.5rem 0; }
 
-        .modal-content label {
-            display: grid;
-            gap: 8px;
-            margin: 14px 0 0;
-            color: var(--muted);
-            font-weight: 600;
-        }
-
-        .modal-content textarea,
-        .modal-content input[type="file"] {
+        input[type="file"] {
+            display: block;
             width: 100%;
-            padding: 12px 14px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            background: rgba(255, 255, 255, 0.09);
-            color: var(--text);
-            font-size: 1rem;
-        }
-
-        .modal-content textarea:focus,
-        .modal-content input[type="file"]:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
-            border-color: rgba(13, 110, 253, 0.55);
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
     </style>
-    <link rel="stylesheet" href="../common/theme.css" />
-    <script src="../common/theme.js" defer></script>
 </head>
 <body>
 
-<header>
-    <a href="studenthome.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to dashboard</a>
-    <div class="brand">Assignments</div>
-</header>
-
-<main>
-    <div class="page-title">
-        <div>
-            <h1>Your Assignments</h1>
-            <p class="subtitle">View upcoming tasks, submit files, and check due dates.</p>
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <a href="studenthome.html"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
         </div>
-        <div class="button-row">
-            <a href="#"><i class="fa-solid fa-rotate"></i> Refresh</a>
-            <a href="#"><i class="fa-solid fa-file-arrow-down"></i> Download all</a>
+        <div class="nav-right">
+            <i class="fa-solid fa-circle-user"></i> John Doe
         </div>
-    </div>
+    </nav>
 
-    <div class="table-wrap">
-        <table>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Subject</th>
-                    <th>Due Date</th>
-                    <th>Status</th>
-                    <th>Submission</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="assignmentBody"></tbody>
-        </table>
+    <div class="container">
+        <div class="header-section">
+            <h2>Your Assignments</h2>
+            <button class="btn-refresh" onclick="render()">Refresh List</button>
+        </div>
 
-        <div class="empty-state" id="emptyState" style="display: none;">
-            <h2>No assignments yet</h2>
-            <p>You're all caught up! New assignments will show up here when your instructor posts them.</p>
-            <div class="button-row">
-                <a href="#"><i class="fa-solid fa-rotate"></i> Refresh</a>
-            </div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Subject</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTable"></tbody>
+            </table>
         </div>
     </div>
 
-    <div class="modal" id="submissionModal" style="display: none;">
+    <div id="actionModal" class="modal">
         <div class="modal-content">
-            <h2>Submit assignment</h2>
-            <p class="subtitle" id="modalAssignmentTitle"></p>
-
-            <label>
-                Notes or link (optional)
-                <textarea id="submissionNotes" rows="4" placeholder="Add a brief description or link to your solution"></textarea>
-            </label>
-
-            <label>
-                Attach PDF (optional)
-                <input id="submissionFile" type="file" accept="application/pdf" />
-            </label>
-
-            <div class="button-row" style="justify-content: flex-end; margin-top: 12px;">
-                <a href="#" id="cancelSubmission" class="btn" style="background: rgba(255,255,255,0.12);">Cancel</a>
-                <a href="#" id="saveSubmission" class="btn" style="background: linear-gradient(135deg, var(--primary), var(--primary-2));">Save</a>
+            <h3 id="mTitle" style="margin-top:0"></h3>
+            <p id="mDesc" style="color:var(--text-muted); font-size:0.95rem;"></p>
+            <hr>
+            <div id="submitSection">
+                <h4 style="margin-top:0">Upload Submission</h4>
+                <input type="file" id="fileInput" accept=".pdf">
+                <button class="btn-refresh" id="finalSubmit" style="width:100%">Upload to Teacher</button>
             </div>
+            <button onclick="closeModal()" class="btn-action btn-view" style="width:100%; margin-top:0.8rem">Close</button>
         </div>
     </div>
-</main>
 
-<script>
-    const assignmentBody = document.getElementById('assignmentBody');
-    const emptyState = document.getElementById('emptyState');
+    <script>
+        const studentName = "John Doe"; 
+        let activeId = null;
 
-    const submissionModal = document.getElementById('submissionModal');
-    const modalAssignmentTitle = document.getElementById('modalAssignmentTitle');
-    const submissionNotes = document.getElementById('submissionNotes');
-    const submissionFile = document.getElementById('submissionFile');
-    const cancelSubmission = document.getElementById('cancelSubmission');
-    const saveSubmission = document.getElementById('saveSubmission');
+        const getAssign = () => JSON.parse(localStorage.getItem('smartexam_assignments') || '[]');
+        const getSubs = () => JSON.parse(localStorage.getItem('smartexam_submissions') || '[]');
 
-    let currentAssignmentId = null;
-
-    function getStudentName() {
-        const stored = localStorage.getItem('smartexam_studentName');
-        if (stored) return stored;
-        const name = prompt('Enter your name for assignment tracking:', 'Student');
-        if (name && name.trim()) {
-            localStorage.setItem('smartexam_studentName', name.trim());
-            return name.trim();
-        }
-        return 'Student';
-    }
-
-    const studentName = getStudentName();
-
-    function loadAssignments() {
-        return JSON.parse(localStorage.getItem('smartexam_assignments') || '[]');
-    }
-
-    function loadSubmissions() {
-        return JSON.parse(localStorage.getItem('smartexam_submissions') || '[]');
-    }
-
-    function saveSubmissions(submissions) {
-        localStorage.setItem('smartexam_submissions', JSON.stringify(submissions));
-    }
-
-    function formatDate(iso) {
-        const d = new Date(iso);
-        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-    }
-
-    function render() {
-        const assignments = loadAssignments();
-        const submissions = loadSubmissions();
-
-        assignmentBody.innerHTML = '';
-
-        if (!assignments.length) {
-            emptyState.style.display = 'block';
-            return;
+        function openModal(id) {
+            activeId = id;
+            const a = getAssign().find(x => x.id == id);
+            const sub = getSubs().find(s => s.assignmentId == id && s.student == studentName);
+            
+            document.getElementById('mTitle').innerText = a.title;
+            document.getElementById('mDesc').innerText = a.description || "No specific instructions provided.";
+            document.getElementById('submitSection').style.display = sub ? 'none' : 'block';
+            document.getElementById('actionModal').style.display = 'grid';
         }
 
-        emptyState.style.display = 'none';
+        const closeModal = () => document.getElementById('actionModal').style.display = 'none';
 
-        assignments.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate)).forEach(a => {
-            const submission = submissions.find(s => s.assignmentId === a.id && s.student === studentName);
-            const dueDate = new Date(a.dueDate);
-            const now = new Date();
-            const isLate = submission && new Date(submission.submittedAt) > dueDate;
-            const status = submission ? (isLate ? 'late' : 'submitted') : (now > dueDate ? 'late' : 'due');
+        document.getElementById('finalSubmit').onclick = async () => {
+            const file = document.getElementById('fileInput').files[0];
+            if(!file) return alert("Please select a PDF file first.");
 
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${a.title}</td>
-                <td>${a.subject}</td>
-                <td>${formatDate(a.dueDate)}</td>
-                <td><span class="label ${status}"><i class="fa-solid ${status === 'due' ? 'fa-clock' : status === 'submitted' ? 'fa-check' : 'fa-exclamation-triangle'}"></i> ${status === 'due' ? 'Due' : status === 'submitted' ? 'Submitted' : 'Late'}</span></td>
-                <td>${submission ? formatDate(submission.submittedAt) : '—'}</td>
-                <td class="actions">
-                    <a href="#" data-id="${a.id}" class="action-btn">${submission ? 'View' : 'Submit'}</a>
-                </td>
-            `;
-
-            row.querySelector('.action-btn').addEventListener('click', e => {
-                e.preventDefault();
-                if (submission) {
-                    const fileInfo = submission.fileName ? `\n\nFile: ${submission.fileName}` : '';
-                    alert(`Submitted on ${formatDate(submission.submittedAt)}.\n\nNotes: ${submission.notes || '—'}${fileInfo}`);
-                    return;
-                }
-
-                openSubmissionModal(a);
-            });
-
-            assignmentBody.appendChild(row);
-        });
-    }
-
-    document.querySelector('.button-row a[href="#"]').addEventListener('click', e => {
-        e.preventDefault();
-        render();
-    });
-
-    render();
-
-    function openSubmissionModal(assignment) {
-        currentAssignmentId = assignment.id;
-        modalAssignmentTitle.textContent = assignment.title;
-        submissionNotes.value = '';
-        submissionFile.value = '';
-        submissionModal.style.display = 'grid';
-    }
-
-    function closeSubmissionModal() {
-        submissionModal.style.display = 'none';
-        currentAssignmentId = null;
-    }
-
-    function readFileAsBase64(file) {
-        return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = () => resolve(reader.result.split(',')[1]);
-            reader.onerror = reject;
             reader.readAsDataURL(file);
-        });
-    }
-
-    saveSubmission.addEventListener('click', async (event) => {
-        event.preventDefault();
-        if (currentAssignmentId === null) return;
-
-        let fileData = null;
-        let fileName = '';
-        if (submissionFile.files.length) {
-            const file = submissionFile.files[0];
-            fileName = file.name;
-            fileData = await readFileAsBase64(file);
-        }
-
-        const newSubmission = {
-            id: Date.now(),
-            assignmentId: currentAssignmentId,
-            student: studentName,
-            submittedAt: new Date().toISOString(),
-            notes: submissionNotes.value.trim(),
-            fileName,
-            fileData,
+            reader.onload = () => {
+                const submissions = getSubs();
+                submissions.push({
+                    assignmentId: activeId,
+                    student: studentName,
+                    submittedAt: new Date().toLocaleString(),
+                    fileName: file.name,
+                    fileData: reader.result.split(',')[1] 
+                });
+                localStorage.setItem('smartexam_submissions', JSON.stringify(submissions));
+                alert("Assignment submitted successfully!");
+                closeModal();
+                render();
+            };
         };
 
-        const submissions = loadSubmissions();
-        submissions.push(newSubmission);
-        saveSubmissions(submissions);
-        render();
-        closeSubmissionModal();
-    });
+        function render() {
+            const table = document.getElementById('studentTable');
+            const assignments = getAssign();
+            const subs = getSubs();
+            
+            if(assignments.length === 0) {
+                table.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:3rem; color:var(--text-muted)">No assignments found.</td></tr>';
+                return;
+            }
 
-    cancelSubmission.addEventListener('click', (event) => {
-        event.preventDefault();
-        closeSubmissionModal();
-    });
-</script>
+            table.innerHTML = assignments.map(a => {
+                const mySub = subs.find(s => s.assignmentId == a.id && s.student == studentName);
+                const isLate = !mySub && new Date() > new Date(a.dueDate);
+                return `
+                <tr>
+                    <td style="font-weight:600">${a.title}</td>
+                    <td><span style="color:var(--text-muted)">${a.subject}</span></td>
+                    <td>${a.dueDate}</td>
+                    <td><span class="status ${mySub ? 'submitted' : (isLate ? 'late' : 'pending')}">${mySub ? 'DONE' : (isLate ? 'LATE' : 'PENDING')}</span></td>
+                    <td><button class="btn-action btn-view" onclick="openModal(${a.id})">${mySub ? 'View Task' : 'Submit Now'}</button></td>
+                </tr>`;
+            }).join('');
+        }
+        
+        render();
+
+        // Close modal if clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('actionModal');
+            if (event.target == modal) closeModal();
+        }
+    </script>
 </body>
 </html>
