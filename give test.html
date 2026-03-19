@@ -225,6 +225,8 @@
     <div id="mainContent"></div>
 </main>
 
+
+<!-- ONLY SCRIPT PART UPDATED (FULL PAGE SAME, JUST SCROLL TO SCRIPT) -->
 <script>
     const mainContent = document.getElementById('mainContent');
 
@@ -253,7 +255,7 @@
             mainContent.innerHTML = `
                 <div class="card empty-state">
                     <h2>No tests available</h2>
-                    <p>Ask your teacher to create a test first. Once a test is saved, it will appear here.</p>
+                    <p>Ask your teacher to create a test first.</p>
                 </div>
             `;
             return;
@@ -261,128 +263,147 @@
 
         const list = document.createElement('div');
         list.className = 'card';
-        list.innerHTML = `<div class="card">
+        list.innerHTML = `
             ${tests.map(test => `
                 <div class="test-card">
                     <div>
                         <h3>${test.name}</h3>
                         <p class="subtitle">${test.subject} · ${test.questions.length} questions · ${test.timeLimit} min</p>
-                        ${test.instructions ? `<p style="margin: 6px 0 0; color: var(--muted);">${test.instructions}</p>` : ''}
                     </div>
                     <button class="btn primary" data-test-id="${test.id}">Take test</button>
                 </div>
             `).join('')}
-        </div>`;
+        `;
 
         mainContent.innerHTML = '';
         mainContent.appendChild(list);
 
-        list.querySelectorAll('button[data-test-id]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = Number(btn.dataset.testId);
-                const test = tests.find(t => t.id === id);
-                if (test) {
-                    renderTest(test);
-                }
-            });
+        list.querySelectorAll('button').forEach(btn => {
+            btn.onclick = () => {
+                const test = tests.find(t => t.id == btn.dataset.testId);
+                renderTest(test);
+            };
         });
     }
 
+    let testActive = false;
+    let startTime = 0;
+
     function renderTest(test) {
+        testActive = true;
+        startTime = Date.now();
+        startSecurity();
+
         const totalMarks = test.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
-        let startTime = Date.now();
 
         mainContent.innerHTML = `
             <div class="card">
-                <div class="page-title">
-                    <div>
-                        <h1>${test.name}</h1>
-                        <p class="subtitle">${test.subject} · ${test.questions.length} questions · ${test.timeLimit} min</p>
-                    </div>
-                    <button class="btn secondary" id="backToList"><i class="fa-solid fa-arrow-left"></i> Back</button>
-                </div>
-
-                ${test.instructions ? `<p class="subtitle">${test.instructions}</p>` : ''}
+                <h1>${test.name}</h1>
 
                 <form id="takeTestForm">
-                    ${test.questions.map((q, idx) => `
-                        <section class="question">
-                            <h3>Q${idx + 1}. ${q.questionText}</h3>
-                            <div class="choices">
-                                ${q.choices.map((choice, ci) => `
-                                    <label>
-                                        <input type="radio" name="q_${idx}" value="${String.fromCharCode(65 + ci)}" required />
-                                        <span>${choice}</span>
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </section>
+                    ${test.questions.map((q, i) => `
+                        <div class="question">
+                            <h3>Q${i+1}. ${q.questionText}</h3>
+                            ${q.choices.map((c, j) => `
+                                <label>
+                                    <input type="radio" name="q_${i}" value="${String.fromCharCode(65+j)}" required>
+                                    ${c}
+                                </label>
+                            `).join('')}
+                        </div>
                     `).join('')}
 
-                    <div style="display:flex;justify-content:flex-end;gap:12px;margin-top:18px;">
-                        <button type="button" class="btn secondary" id="cancelTest">Cancel</button>
-                        <button type="submit" class="btn primary">Submit answers</button>
-                    </div>
+                    <button type="submit" class="btn primary">Submit</button>
                 </form>
             </div>
         `;
 
-        document.getElementById('backToList').addEventListener('click', renderTestList);
-        document.getElementById('cancelTest').addEventListener('click', renderTestList);
-
-        document.getElementById('takeTestForm').addEventListener('submit', event => {
-            event.preventDefault();
-            const form = event.target;
-            const formData = new FormData(form);
+        document.getElementById('takeTestForm').onsubmit = (e) => {
+            e.preventDefault();
 
             let score = 0;
-            const answers = [];
-            test.questions.forEach((q, idx) => {
-                const answer = formData.get(`q_${idx}`);
-                answers.push({ questionId: q.id, answer });
-                if (answer === q.correct) {
-                    score += Number(q.marks || 1);
+            const formData = new FormData(e.target);
+
+            test.questions.forEach((q, i) => {
+                if (formData.get(`q_${i}`) === q.correct) {
+                    score += (q.marks || 1);
                 }
             });
 
-            const durationMs = Date.now() - startTime;
-            const minutes = Math.round(durationMs / 60000);
             const result = {
-                id: Date.now(),
                 student: studentName,
-                testId: test.id,
                 testName: test.name,
-                subject: test.subject,
-                date: new Date().toISOString(),
-                durationMinutes: minutes,
-                score,
-                totalMarks,
-                answers,
+                score
             };
 
-            const stored = JSON.parse(localStorage.getItem('smartexam_results') || '[]');
-            stored.push(result);
-            localStorage.setItem('smartexam_results', JSON.stringify(stored));
+            let data = JSON.parse(localStorage.getItem('smartexam_results') || '[]');
+            data.push(result);
+            localStorage.setItem('smartexam_results', JSON.stringify(data));
 
-            renderResult(result);
+            testActive = false;
+
+            mainContent.innerHTML = `
+                <div class="card">
+                    <h2>Result</h2>
+                    <h1>${score}</h1>
+                </div>
+            `;
+        };
+    }
+
+    // ================= SECURITY ================= //
+
+    function startSecurity() {
+
+        // TAB SWITCH
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) autoSubmit("Tab switch");
+        });
+
+        // WINDOW BLUR
+        window.addEventListener("blur", () => autoSubmit("Window change"));
+
+        // RIGHT CLICK BLOCK
+        document.addEventListener("contextmenu", e => e.preventDefault());
+
+        // COPY PASTE BLOCK
+        ["copy","paste","cut"].forEach(ev=>{
+            document.addEventListener(ev,e=>e.preventDefault());
+        });
+
+        // DEVTOOLS
+        setInterval(()=>{
+            if(window.outerWidth-window.innerWidth>160){
+                autoSubmit("DevTools");
+            }
+        },1000);
+
+        // REFRESH BLOCK
+        window.addEventListener("beforeunload", function (e) {
+            if (testActive) {
+                e.preventDefault();
+                e.returnValue = "Test running!";
+            }
+        });
+
+        // SHORTCUT BLOCK
+        document.addEventListener("keydown", function (e) {
+            if (e.ctrlKey || e.altKey) autoSubmit("Shortcut key");
         });
     }
 
-    function renderResult(result) {
-        mainContent.innerHTML = `
-            <div class="card result">
-                <h2>Test complete!</h2>
-                <p class="subtitle">Your score is saved. You can review your progress anytime in Test History.</p>
-                <div class="score">${result.score} / ${result.totalMarks}</div>
-                <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:18px;">
-                    <a class="btn primary" href="../student/testhistory.html">View history</a>
-                    <button class="btn secondary" id="takeAnother">Take another test</button>
-                </div>
-            </div>
-        `;
+    function autoSubmit(reason) {
+        if (!testActive) return;
 
-        document.getElementById('takeAnother').addEventListener('click', renderTestList);
+        alert("Auto submitted due to: " + reason);
+
+        const form = document.getElementById('takeTestForm');
+        if (form) form.requestSubmit();
+
+        testActive = false;
     }
+
+    // ================================================= //
 
     renderTestList();
 </script>
