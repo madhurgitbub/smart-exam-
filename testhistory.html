@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>History</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Vz9PZQF11BtbT5F01FJFiWuggMLjt3E1W3+E3ZwF+V8x+fdCjTBQHn0aczYXMdTa8QBuN0PpbDyXlP6LlXk8Hg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        :root {
+            --bg: #0b1220;
+            --panel: rgba(255, 255, 255, 0.08);
+            --panel-border: rgba(255, 255, 255, 0.16);
+            --text: #ebf2ff;
+            --muted: rgba(235, 242, 255, 0.7);
+            --primary: #0d6efd;
+            --primary-2: #6610f2;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, rgba(13, 110, 253, 0.45), transparent 55%),
+                linear-gradient(180deg, #081427 0%, #060a11 100%);
+            color: var(--text);
+        }
+
+        header {
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            background: rgba(7, 11, 23, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 999px;
+            transition: background 0.18s ease, color 0.18s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text);
+        }
+
+        main {
+            padding: 32px 24px;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2.1rem;
+        }
+
+        .subtitle {
+            margin: 10px 0 24px;
+            color: var(--muted);
+            max-width: 620px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 18px;
+            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.32);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 780px;
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.02em;
+        }
+
+        td {
+            color: rgba(235, 242, 255, 0.88);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .status.completed {
+            background: rgba(0, 195, 118, 0.2);
+            color: #00c376;
+        }
+
+        .status.pending {
+            background: rgba(255, 210, 0, 0.18);
+            color: #f8c032;
+        }
+
+        .status.missed {
+            background: rgba(255, 75, 75, 0.15);
+            color: #ff6767;
+        }
+
+        .empty-state {
+            padding: 48px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .empty-state h2 {
+            margin: 0 0 12px;
+            font-size: 1.7rem;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 24px 0 0;
+        }
+
+        .button-row a {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            border-radius: 999px;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 18px 36px rgba(9, 101, 212, 0.35);
+        }
+
+        @media (max-width: 780px) {
+            .table-wrap {
+                min-width: 0;
+            }
+
+            table {
+                min-width: 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../common/theme.css" />
+    <script src="../common/theme.js" defer></script>
+</head>
+<body>
+
+<header>
+    <a href="studenthome.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to dashboard</a>
+    <div class="brand">History</div>
+</header>
+
+<main>
+    <div class="page-title">
+        <div>
+            <h1>Your History</h1>
+            <p class="subtitle">Review your completed tests and submitted assignments in one place.</p>
+        </div>
+        <div class="button-row">
+            <a href="#"><i class="fa-solid fa-rotate"></i> Refresh</a>
+            <a href="#"><i class="fa-solid fa-download"></i> Export CSV</a>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <h2 style="margin-top: 0; margin-bottom: 16px; font-size: 1.3rem; color: var(--text);"><i class="fa-solid fa-graduation-cap" style="margin-right: 8px;"></i>Test Results</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Test Name</th>
+                    <th>Subject</th>
+                    <th>Score</th>
+                    <th>Duration</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="testBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyTestState" style="display: none;">
+            <h3>No tests yet</h3>
+            <p>Complete your first test to see it here.</p>
+            <a href="give test.html" style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; text-decoration: none; background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: white; font-weight: 700;"><i class="fa-solid fa-pen-to-square"></i> Take a test</a>
+        </div>
+    </div>
+
+    <div class="table-wrap" style="margin-top: 40px;">
+        <h2 style="margin-top: 0; margin-bottom: 16px; font-size: 1.3rem; color: var(--text);"><i class="fa-solid fa-file-upload" style="margin-right: 8px;"></i>Assignment Submissions</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Assignment</th>
+                    <th>Subject</th>
+                    <th>File Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="assignmentBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyAssignmentState" style="display: none;">
+            <h3>No submissions yet</h3>
+            <p>Submit your first assignment to see it here.</p>
+            <a href="student assinement.html" style="display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 999px; text-decoration: none; background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: white; font-weight: 700;"><i class="fa-solid fa-file-upload"></i> Submit assignment</a>
+        </div>
+    </div>
+
+    <div class="empty-state" id="emptyState" style="display: none;">
+        <h2>No history yet</h2>
+        <p>Once you complete a test or submit an assignment, those records will appear here.</p>
+        <div class="button-row">
+            <a href="give test.html"><i class="fa-solid fa-pen-to-square"></i> Take a test</a>
+            <a href="student assinement.html"><i class="fa-solid fa-file-upload"></i> Submit assignment</a>
+        </div>
+    </div>
+</main>
+
+<script>
+    const testBody = document.getElementById('testBody');
+    const assignmentBody = document.getElementById('assignmentBody');
+    const emptyTestState = document.getElementById('emptyTestState');
+    const emptyAssignmentState = document.getElementById('emptyAssignmentState');
+    const emptyState = document.getElementById('emptyState');
+
+    function formatDate(value) {
+        const date = new Date(value);
+        if (isNaN(date)) return value || '—';
+        return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function loadResults() {
+        return JSON.parse(localStorage.getItem('smartexam_results') || '[]');
+    }
+
+    function loadSubmissions() {
+        return JSON.parse(localStorage.getItem('smartexam_submissions') || '[]');
+    }
+
+    function loadAssignments() {
+        return JSON.parse(localStorage.getItem('smartexam_assignments') || '[]');
+    }
+
+    function renderTestResults() {
+        const results = loadResults().sort((a, b) => new Date(b.date) - new Date(a.date));
+        testBody.innerHTML = '';
+
+        if (!results.length) {
+            emptyTestState.style.display = 'block';
+            return;
+        }
+
+        emptyTestState.style.display = 'none';
+
+        results.forEach(result => {
+            const row = document.createElement('tr');
+            const percent = result.totalMarks ? Math.round((result.score / result.totalMarks) * 100) : 0;
+            const statusClass = percent >= 50 ? 'completed' : 'missed';
+            const statusText = percent >= 50 ? 'Completed' : 'Needs improvement';
+
+            row.innerHTML = `
+                <td>${formatDate(result.date)}</td>
+                <td>${result.testName || '—'}</td>
+                <td>${result.subject || '—'}</td>
+                <td><strong>${result.score} / ${result.totalMarks}</strong> (${percent}%)</td>
+                <td>${result.durationMinutes ? `${result.durationMinutes}m` : '—'}</td>
+                <td><span class="status ${statusClass}">${statusText}</span></td>
+                <td><a href="#" onclick="alert('Score: ${result.score} / ${result.totalMarks}\\nTest: ${result.testName}\\nDate: ${formatDate(result.date)}'); return false;" style="cursor: pointer; color: var(--primary);"><i class="fa-solid fa-arrow-right"></i></a></td>
+            `;
+            testBody.appendChild(row);
+        });
+    }
+
+    function renderAssignmentSubmissions() {
+        const submissions = loadSubmissions().sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+        const assignments = loadAssignments();
+        assignmentBody.innerHTML = '';
+
+        if (!submissions.length) {
+            emptyAssignmentState.style.display = 'block';
+            return;
+        }
+
+        emptyAssignmentState.style.display = 'none';
+
+        submissions.forEach(sub => {
+            const assignment = assignments.find(a => a.id == sub.assignmentId);
+            const row = document.createElement('tr');
+
+            const downloadHtml = sub.fileData
+                ? `<a href="data:application/pdf;base64,${sub.fileData}" download="${sub.fileName || 'submission.pdf'}" style="cursor: pointer; color: var(--primary);"><i class="fa-solid fa-download"></i> Download</a>`
+                : '—';
+
+            row.innerHTML = `
+                <td>${formatDate(sub.submittedAt)}</td>
+                <td>${assignment?.title || `Assignment ${sub.assignmentId || '?'}`}</td>
+                <td>${assignment?.subject || '—'}</td>
+                <td>${sub.fileName || '—'}</td>
+                <td><span class="status completed">Submitted</span></td>
+                <td>${downloadHtml}</td>
+            `;
+            assignmentBody.appendChild(row);
+        });
+    }
+
+    function render() {
+        const results = loadResults();
+        const submissions = loadSubmissions();
+
+        if (!results.length && !submissions.length) {
+            emptyState.style.display = 'block';
+        } else {
+            emptyState.style.display = 'none';
+        }
+
+        renderTestResults();
+        renderAssignmentSubmissions();
+    }
+
+    render();
+</script>
+</body>
+</html>

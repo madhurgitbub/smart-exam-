@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SmartExam - Professional Online Examination Platform</title>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    position: relative;
+    background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #0a0e1a 100%);
+    color: #e9ecef;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.page-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(13, 110, 253, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(102, 16, 242, 0.08) 0%, transparent 50%),
+        linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #0a0e1a 100%);
+    background-attachment: fixed;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 50%, #6610f2 100%);
+    color: #f8f9fa;
+    padding: 40px 20px;
+    box-shadow: 0 20px 40px rgba(13, 110, 253, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 48px;
+    letter-spacing: 0.5px;
+    font-weight: 800;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.header .logo-icon {
+    font-size: 52px;
+    margin-right: 12px;
+    display: inline-block;
+}
+
+.header p {
+    margin: 8px 0 0;
+    font-size: 18px;
+    opacity: 0.95;
+    font-weight: 300;
+}
+
+/* Main container */
+.container {
+    margin-top: 60px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 20px;
+}
+
+/* Login section */
+.login-section {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.login-section h2 {
+    font-size: 36px;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.login-section p {
+    font-size: 16px;
+    color: #adb5bd;
+    margin-bottom: 40px;
+}
+
+/* Login buttons grid */
+.login-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    margin-bottom: 60px;
+}
+
+.login-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(13, 110, 253, 0.2);
+    color: white;
+    text-decoration: none;
+    border-radius: 16px;
+    font-size: 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+}
+
+.login-btn i {
+    font-size: 48px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.15), rgba(102, 16, 242, 0.15));
+    border-color: rgba(13, 110, 253, 0.6);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(13, 110, 253, 0.2);
+}
+
+/* Features section */
+.features-section {
+    margin: 80px 0;
+}
+
+.features-section h2 {
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 50px;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 80px;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(13, 110, 253, 0.2);
+    padding: 32px 24px;
+    border-radius: 16px;
+    text-align: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.feature-card:hover {
+    background: rgba(13, 110, 253, 0.1);
+    border-color: rgba(13, 110, 253, 0.6);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(13, 110, 253, 0.15);
+}
+
+.feature-card i {
+    font-size: 42px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.feature-card h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: #f8f9fa;
+}
+
+.feature-card p {
+    color: #adb5bd;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Stats section */
+.stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    margin: 80px 0;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.1), rgba(102, 16, 242, 0.1));
+    border-radius: 16px;
+    border: 1px solid rgba(13, 110, 253, 0.2);
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    color: #adb5bd;
+    font-size: 14px;
+}
+
+/* About Section */
+.about {
+    margin: 80px auto;
+    max-width: 1000px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e9ecef;
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(13, 110, 253, 0.2);
+}
+
+.about h2 {
+    margin-bottom: 30px;
+    color: #f8f9fa;
+    font-size: 32px;
+    text-align: center;
+}
+
+.about .about-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.about .about-text,
+.about .about-features {
+    flex: 1 1 300px;
+}
+
+.about .about-illustration {
+    flex: 1 1 300px;
+    text-align: center;
+}
+
+.about .about-illustration img {
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(13, 110, 253, 0.2);
+    object-fit: cover;
+    max-height: 400px;
+    border: 2px solid rgba(13, 110, 253, 0.3);
+}
+
+.about p {
+    margin: 0 0 18px;
+    font-size: 16px;
+    line-height: 1.8;
+    color: #cbd5e1;
+}
+
+.about h3 {
+    color: #f8f9fa;
+    margin: 24px 0 16px;
+    font-size: 20px;
+}
+
+.about ul {
+    margin: 0;
+    font-size: 15px;
+    line-height: 2;
+    padding-left: 1.5rem;
+    color: #cbd5e1;
+    list-style-type: none;
+}
+
+.about ul li:before {
+    content: "✓ ";
+    color: #0d6efd;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Footer */
+footer {
+    background: rgba(0, 0, 0, 0.3);
+    color: #adb5bd;
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 1px solid rgba(13, 110, 253, 0.2);
+    font-size: 14px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-btn, .feature-card {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 32px;
+    }
+    
+    .login-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .about {
+        padding: 30px;
+    }
+}
+
+</style>
+
+    <link rel="stylesheet" href="theme.css" />
+    <script src="theme.js" defer></script>
+</head>
+
+<body>
+
+<!-- Full-page background -->
+<div class="page-bg" aria-hidden="true"></div>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-content">
+        <h1><span class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></span>SmartExam</h1>
+        <p>Professional Online Examination Platform</p>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+
+    <!-- Login Section -->
+    <div class="login-section">
+        <h2>Get Started</h2>
+        <p>Select your role to access the platform</p>
+        <div class="login-buttons">
+            <a href="student.html" class="login-btn">
+                <i class="fa-solid fa-user-graduate"></i>
+                Student
+            </a>
+            <a href="teacher home .html" class="login-btn">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                Teacher
+            </a>
+            
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="stats-section">
+        <div class="stat-item">
+            <div class="stat-number">10K+</div>
+            <div class="stat-label">Active Students</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Educators</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">50K+</div>
+            <div class="stat-label">Exams Conducted</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">99.9%</div>
+            <div class="stat-label">Uptime</div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section">
+        <h2>Why Choose SmartExam?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fa-solid fa-shield-halved"></i>
+                <h3>Secure & Reliable</h3>
+                <p>Enterprise-grade security with encrypted data, fraud prevention, and secure test delivery protocols.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-chart-line"></i>
+                <h3>Advanced Analytics</h3>
+                <p>Comprehensive performance reports with detailed insights into student progress and assessment effectiveness.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-mobile-screen"></i>
+                <h3>Mobile Ready</h3>
+                <p>Fully responsive design works seamlessly on all devices - desktop, tablet, and smartphone.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-zap"></i>
+                <h3>Lightning Fast</h3>
+                <p>Optimized performance ensures smooth exam delivery even with high concurrent users.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-users"></i>
+                <h3>Role-Based Access</h3>
+                <p>Flexible user roles with customizable permissions for students, teachers, and administrators.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fa-solid fa-cogs"></i>
+                <h3>Easy Management</h3>
+                <p>Intuitive interface for creating exams, managing users, and tracking results effortlessly.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="about">
+        <h2>About SmartExam Platform</h2>
+        <div class="about-grid">
+            <div class="about-text">
+                <p>
+                    <strong>SmartExam</strong> is a comprehensive, secure online examination platform designed for modern educational institutions. Built with cutting-edge technology and user-centric design, it revolutionizes how institutions conduct, manage, and analyze assessments.
+                </p>
+                <p>
+                    Our platform combines powerful features with an intuitive interface to create a seamless experience for students, educators, and administrators. Whether you're conducting routine assessments or high-stakes examinations, SmartExam provides the tools and reliability you need.
+                </p>
+            </div>
+            <div class="about-illustration">
+                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80" alt="Online examination platform">
+            </div>
+            <div class="about-features">
+                <h3>Core Capabilities</h3>
+                <ul>
+                    <li>Create and manage unlimited exams and assignments</li>
+                    <li>Real-time exam monitoring and proctoring support</li>
+                    <li>Automated grading and instant result generation</li>
+                    <li>Detailed performance analytics and reporting</li>
+                    <li>Secure authentication and data encryption</li>
+                    <li>Responsive design for all devices</li>
+                    <li>Student and teacher dashboard portals</li>
+                    <li>Export results in multiple formats</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 SmartExam Platform. All rights reserved. | Empowering Education Through Technology</p>
+</footer>
+
+</body>
+</html>
