@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Result</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="../../js/config.js"></script>
+<script src="../../js/exam-utils.js"></script>
+<script src="../../js/auth-service.js"></script>
+<script src="../../js/result-service.js"></script>
+<script src="../../js/analytics-service.js"></script>
+
+<style>
+:root {
+    --bg: #0b1220;
+    --panel: rgba(255, 255, 255, 0.08);
+    --panel-border: rgba(255, 255, 255, 0.16);
+    --text: #ebf2ff;
+    --muted: rgba(235, 242, 255, 0.7);
+    --primary: #0d6efd;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: radial-gradient(circle at top, rgba(13, 110, 253, 0.45), transparent 55%),
+        linear-gradient(180deg, #081427 0%, #060a11 100%);
+    color: var(--text);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: rgba(7, 11, 23, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+header a {
+    color: var(--text);
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.card {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+}
+
+.result-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.result-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 2.5rem;
+}
+
+.result-header .meta {
+    color: var(--muted);
+    margin-bottom: 16px;
+}
+
+.score-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: center;
+    margin: 24px 0;
+}
+
+.score-display {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 16px 0;
+    color: var(--primary);
+    text-align: center;
+}
+
+.score-display.pass {
+    color: var(--success);
+}
+
+.score-display.fail {
+    color: var(--danger);
+}
+
+.gauge-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.stat {
+    background: rgba(255, 255, 255, 0.06);
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: 8px;
+}
+
+.answer-review {
+    margin-top: 32px;
+}
+
+.sort-controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.sort-btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.sort-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.sort-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.answer-item {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    transition: all 0.2s;
+}
+
+.answer-item:hover {
+    background: rgba(255, 255, 255, 0.09);
+}
+
+.answer-item.correct {
+    border-left: 4px solid var(--success);
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.answer-item.incorrect {
+    border-left: 4px solid var(--danger);
+    background: rgba(239, 68, 68, 0.08);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.question-text {
+    font-weight: 600;
+    flex: 1;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.difficulty-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.difficulty-badge.easy {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.difficulty-badge.medium {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+}
+
+.difficulty-badge.hard {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.status-badge.incorrect {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+}
+
+.answer-details {
+    display: grid;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.answer-details > div {
+    padding: 8px 0;
+}
+
+.option-display {
+    display: grid;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.option-letter {
+    min-width: 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+.option.correct {
+    border-color: var(--success);
+    background: rgba(16, 185, 129, 0.15);
+}
+
+.option.correct .option-letter {
+    background: var(--success);
+    color: white;
+}
+
+.option.incorrect {
+    border-color: var(--danger);
+}
+
+.option.incorrect .option-letter {
+    background: var(--danger);
+    color: white;
+}
+
+.option-text {
+    flex: 1;
+}
+
+.marks-info {
+    display: flex;
+    gap: 16px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.mark-item {
+    flex: 1;
+    min-width: 150px;
+}
+
+.mark-label {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.mark-value {
+    font-weight: 700;
+    color: var(--success);
+    font-size: 1.1rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+}
+
+.btn.primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(13, 110, 253, 0.4);
+}
+
+.btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.explanation {
+    margin-top: 12px;
+    padding: 12px;
+    border-left: 3px solid var(--warning);
+    background: rgba(245, 158, 11, 0.1);
+    border-radius: 4px;
+}
+
+.explanation-label {
+    font-weight: 600;
+    color: var(--warning);
+    margin-bottom: 6px;
+}
+
+.explanation-text {
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+}
+
+@media print {
+    header, .button-group, .sort-controls { display: none; }
+    body { background: white; color: black; }
+    .card { background: white; border: none; }
+}
+
+@media (max-width: 768px) {
+    .score-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .container {
+        padding: 16px;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <a href="studenthome.html">
+        <i class="fa-solid fa-arrow-left"></i> Back to dashboard
+    </a>
+    <h2>📊 Exam Result</h2>
+    <div></div>
+</header>
+
+<div class="container">
+    <div id="mainContent"></div>
+</div>
+
+<script>
+    let resultData = null;
+    let currentSort = 'order';
+
+    async function initPage() {
+        ExamUtils.showLoader('Loading result...');
+        
+        try {
+            const isAuth = await authService.isAuthenticated();
+            if (!isAuth) {
+                ExamUtils.hideLoader();
+                ExamUtils.showToast('Please log in to continue', 'error');
+                window.location.href = 'student.html';
+                return;
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const attemptId = params.get('attemptId');
+
+            if (!attemptId) {
+                ExamUtils.hideLoader();
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="card empty">
+                        <p>No attempt ID provided. Please try again.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            await loadResult(attemptId);
+            ExamUtils.hideLoader();
+        } catch (error) {
+            ExamUtils.hideLoader();
+            console.error('Init error:', error);
+            ExamUtils.showToast('Failed to load result', 'error');
+        }
+    }
+
+    async function loadResult(attemptId) {
+        try {
+            resultData = await resultService.getResult(attemptId);
+            
+            if (!resultData) {
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="card empty">
+                        <p>Result not found.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            renderResult();
+        } catch (error) {
+            console.error('Load result error:', error);
+            ExamUtils.showToast('Failed to load result', 'error');
+        }
+    }
+
+    function renderResult() {
+        const { attempt, answers } = resultData;
+        const percentage = attempt.percentage || 0;
+        const isPassed = percentage >= 40;
+        const grade = ExamUtils.getGrade(percentage);
+        const gradeColor = ExamUtils.getGradeColor(percentage);
+        
+        const correctCount = answers.filter(a => a.is_correct).length;
+        const totalQuestions = answers.length;
+        const wrongCount = totalQuestions - correctCount;
+        const notAttempted = answers.filter(a => !a.selected_option).length;
+        
+        const mainContent = document.getElementById('mainContent');
+        mainContent.innerHTML = `
+            <div class="card">
+                <div class="result-header">
+                    <h1>${attempt.exams.title}</h1>
+                    <div class="meta">
+                        <strong>${attempt.profiles?.name || 'Student'}</strong> • Roll: ${attempt.profiles?.roll_no || '—'}<br>
+                        Subject: ${attempt.exams?.subject || '—'}
+                    </div>
+                    
+                    <div class="score-section">
+                        <div>
+                            <div class="score-display ${isPassed ? 'pass' : 'fail'}">
+                                ${attempt.score} / ${attempt.total_marks}
+                            </div>
+                            <p style="margin: 12px 0 0; color: var(--muted);">
+                                ${isPassed ? '✅ PASSED' : '❌ FAILED'}
+                            </p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 2.5rem; font-weight: bold; color: ${gradeColor}; margin-bottom: 8px;">
+                                ${grade}
+                            </div>
+                            <div style="font-size: 1.5rem; color: ${gradeColor};">${percentage.toFixed(2)}%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value">${correctCount}</div>
+                        <div class="stat-label">Correct Answers</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${wrongCount}</div>
+                        <div class="stat-label">Wrong Answers</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${notAttempted}</div>
+                        <div class="stat-label">Not Attempted</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${ExamUtils.formatDuration(attempt.time_taken_seconds)}</div>
+                        <div class="stat-label">Time Taken</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${ExamUtils.formatDate(attempt.submitted_at)}</div>
+                        <div class="stat-label">Submitted On</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${(attempt.total_marks / totalQuestions).toFixed(2)}</div>
+                        <div class="stat-label">Avg Marks/Q</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Answer Review</h2>
+                <div class="sort-controls">
+                    <button class="sort-btn ${currentSort === 'order' ? 'active' : ''}" onclick="sortAnswers('order')">
+                        <i class="fa-solid fa-list"></i> Question Order
+                    </button>
+                    <button class="sort-btn ${currentSort === 'correctness' ? 'active' : ''}" onclick="sortAnswers('correctness')">
+                        <i class="fa-solid fa-check"></i> Correctness
+                    </button>
+                </div>
+                <div class="answer-review">
+                    ${renderAnswersList(answers)}
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn secondary" onclick="window.history.back()">
+                    <i class="fa-solid fa-arrow-left"></i> Go Back
+                </button>
+                <button class="btn primary" onclick="downloadPDF()">
+                    <i class="fa-solid fa-download"></i> Download PDF
+                </button>
+                <button class="btn primary" onclick="window.print()">
+                    <i class="fa-solid fa-print"></i> Print
+                </button>
+                <button class="btn secondary" onclick="retakeExam()">
+                    <i class="fa-solid fa-rotate"></i> Take Again
+                </button>
+            </div>
+        `;
+    }
+
+    function renderAnswersList(answers) {
+        return answers.map((answer, idx) => {
+            const isCorrect = answer.is_correct;
+            const optionKey = 'option_' + answer.selected_option?.toLowerCase();
+            const selectedText = answer.selected_option ? answer.exam_questions[optionKey] : 'Not answered';
+            const correctOptionKey = 'option_' + answer.exam_questions.correct_answer.toLowerCase();
+            const correctText = answer.exam_questions[correctOptionKey];
+            
+            return `
+                <div class="answer-item ${isCorrect ? 'correct' : 'incorrect'}">
+                    <div class="question-header">
+                        <div class="question-text">
+                            Q${idx + 1}. ${answer.exam_questions.question_text}
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <span class="status-badge ${isCorrect ? '' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="answer-details">
+                        <div>
+                            <strong>Your Answer:</strong><br>
+                            <div class="option-display">
+                                <div class="option ${isCorrect || !answer.selected_option ? '' : 'incorrect'}">
+                                    <div class="option-letter">${answer.selected_option || '—'}</div>
+                                    <div class="option-text">${selectedText}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${!isCorrect ? `
+                            <div>
+                                <strong>Correct Answer:</strong><br>
+                                <div class="option-display">
+                                    <div class="option correct">
+                                        <div class="option-letter">${answer.exam_questions.correct_answer}</div>
+                                        <div class="option-text">${correctText}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${answer.exam_questions.explanation ? `
+                            <div class="explanation">
+                                <div class="explanation-label"><i class="fa-solid fa-lightbulb"></i> Explanation</div>
+                                <div class="explanation-text">${answer.exam_questions.explanation}</div>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="marks-info">
+                            <div class="mark-item">
+                                <div class="mark-label">Marks Obtained</div>
+                                <div class="mark-value">${answer.marks_obtained || 0}</div>
+                            </div>
+                            <div class="mark-item">
+                                <div class="mark-label">Total Marks</div>
+                                <div class="mark-value">${answer.exam_questions.marks || 1}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function sortAnswers(sortType) {
+        currentSort = sortType;
+        const { attempt, answers } = resultData;
+        
+        let sorted = [...answers];
+        if (sortType === 'correctness') {
+            sorted.sort((a, b) => {
+                if (a.is_correct === b.is_correct) return 0;
+                return a.is_correct ? -1 : 1;
+            });
+        }
+        
+        const reviewDiv = document.querySelector('.answer-review');
+        reviewDiv.innerHTML = renderAnswersList(sorted);
+        
+        document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    async function downloadPDF() {
+        const { attempt, answers } = resultData;
+        const percentage = attempt.percentage || 0;
+        const isPassed = percentage >= 40;
+        const grade = ExamUtils.getGrade(percentage);
+        
+        const element = document.querySelector('.card');
+        const opt = {
+            margin: 10,
+            filename: `result_${attempt.id}_${new Date().toISOString().split('T')[0]}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+        };
+        
+        try {
+            ExamUtils.showLoader('Generating PDF...');
+            html2pdf().set(opt).from(element).save();
+            ExamUtils.hideLoader();
+            ExamUtils.showToast('PDF downloaded successfully', 'success');
+        } catch (error) {
+            ExamUtils.hideLoader();
+            ExamUtils.showToast('Failed to download PDF', 'error');
+        }
+    }
+
+    function retakeExam() {
+        const { attempt } = resultData;
+        if (confirm('Do you want to take this exam again?')) {
+            window.location.href = `exam.html?examId=${attempt.exam_id}`;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+
+</body>
+</html>
+</head>
+
+<body>
+
+<header>
+    <a href="studenthome.html">
+        <i class="fa-solid fa-arrow-left"></i> Back to dashboard
+    </a>
+    <h2>📊 Exam Result</h2>
+    <div></div>
+</header>
+
+<div class="container" id="mainContent"></div>
+
+<script>
+    let resultData = null;
+
+    async function initPage() {
+        ExamUtils.showLoader('Loading result...');
+        
+        try {
+            const isAuth = await authService.isAuthenticated();
+            if (!isAuth) {
+                ExamUtils.hideLoader();
+                ExamUtils.showToast('Please log in to continue', 'error');
+                window.location.href = 'student.html';
+                return;
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const attemptId = params.get('attemptId');
+
+            if (!attemptId) {
+                ExamUtils.hideLoader();
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="card empty">
+                        <p>No attempt ID provided. Please try again.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            await loadResult(attemptId);
+            ExamUtils.hideLoader();
+        } catch (error) {
+            ExamUtils.hideLoader();
+            console.error('Init error:', error);
+            ExamUtils.showToast('Failed to load result', 'error');
+        }
+    }
+
+    async function loadResult(attemptId) {
+        try {
+            resultData = await resultService.getResult(attemptId);
+            
+            if (!resultData) {
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="card empty">
+                        <p>Result not found.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            renderResult();
+        } catch (error) {
+            console.error('Load result error:', error);
+            ExamUtils.showToast('Failed to load result', 'error');
+        }
+    }
+
+    function renderResult() {
+        const { attempt, answers } = resultData;
+        const percentage = attempt.percentage || 0;
+        const isPassed = percentage >= 40;
+        
+        const mainContent = document.getElementById('mainContent');
+        mainContent.innerHTML = `
+            <div class="card">
+                <div class="result-header">
+                    <h1>${attempt.exams.title}</h1>
+                    <div class="score-display ${isPassed ? 'pass' : 'fail'}">
+                        ${attempt.score} / ${attempt.total_marks}
+                    </div>
+                    <p style="margin: 0; color: var(--muted);">
+                        ${isPassed ? '✅ PASSED' : '❌ FAILED'} · ${ExamUtils.getGrade(percentage)} Grade
+                    </p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-value">${percentage.toFixed(2)}%</div>
+                        <div class="stat-label">Percentage</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${ExamUtils.formatDuration(attempt.time_taken_seconds)}</div>
+                        <div class="stat-label">Time Taken</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${answers.filter(a => a.is_correct).length}/${answers.length}</div>
+                        <div class="stat-label">Correct Answers</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">${ExamUtils.formatDate(attempt.submitted_at)}</div>
+                        <div class="stat-label">Submitted On</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Answer Review</h2>
+                <div class="answer-review">
+                    ${answers.map((answer, idx) => `
+                        <div class="answer-item ${answer.is_correct ? 'correct' : 'incorrect'}">
+                            <div class="question-text">
+                                Q${idx + 1}. ${answer.exam_questions.question_text}
+                            </div>
+                            <div class="answer-details">
+                                <div>
+                                    <strong>Your Answer:</strong> 
+                                    ${answer.selected_option ? answer.exam_questions['option_' + answer.selected_option.toLowerCase()] : 'Not answered'}
+                                </div>
+                                ${!answer.is_correct ? `
+                                    <div>
+                                        <strong>Correct Answer:</strong> 
+                                        ${answer.exam_questions['option_' + answer.exam_questions.correct_answer.toLowerCase()]}
+                                    </div>
+                                ` : ''}
+                                ${answer.exam_questions.explanation ? `
+                                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                                        <strong>Explanation:</strong><br>
+                                        ${answer.exam_questions.explanation}
+                                    </div>
+                                ` : ''}
+                                <div style="margin-top: 8px;">
+                                    <strong>Marks:</strong> ${answer.marks_obtained || 0}/${answer.exam_questions.marks || 1}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn secondary" onclick="window.history.back()">
+                    <i class="fa-solid fa-arrow-left"></i> Go Back
+                </button>
+                <button class="btn primary" onclick="downloadPDF()">
+                    <i class="fa-solid fa-download"></i> Download Report
+                </button>
+            </div>
+        `;
+    }
+
+    function downloadPDF() {
+        const { attempt, answers } = resultData;
+        const percentage = attempt.percentage || 0;
+        
+        let content = `
+EXAM RESULT REPORT
+==================
+
+Exam: ${attempt.exams.title}
+Date: ${ExamUtils.formatDate(attempt.submitted_at)}
+Student: ${attempt.profiles.name || 'Student'}
+
+SCORE: ${attempt.score}/${attempt.total_marks}
+PERCENTAGE: ${percentage.toFixed(2)}%
+GRADE: ${ExamUtils.getGrade(percentage)}
+TIME TAKEN: ${ExamUtils.formatDuration(attempt.time_taken_seconds)}
+
+ANSWER REVIEW:
+`;
+
+        answers.forEach((answer, idx) => {
+            content += `
+\nQ${idx + 1}. ${answer.exam_questions.question_text}
+Your Answer: ${answer.selected_option ? answer.exam_questions['option_' + answer.selected_option.toLowerCase()] : 'Not answered'}
+Correct Answer: ${answer.exam_questions['option_' + answer.exam_questions.correct_answer.toLowerCase()]}
+Status: ${answer.is_correct ? 'CORRECT' : 'INCORRECT'}
+Marks: ${answer.marks_obtained || 0}/${answer.exam_questions.marks || 1}
+`;
+        });
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `exam-result-${attempt.id}.txt`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+
+</body>
+</html>

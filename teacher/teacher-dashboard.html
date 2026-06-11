@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teacher Dashboard</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../common/theme.css" />
+
+    <style>
+        :root {
+            --bg: #0b1220;
+            --panel: rgba(255, 255, 255, 0.08);
+            --panel-border: rgba(255, 255, 255, 0.16);
+            --text: #ebf2ff;
+            --muted: rgba(235, 242, 255, 0.7);
+            --primary: #0d6efd;
+            --success: #198754;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #0b1220;
+            color: var(--text);
+        }
+
+        header {
+            background: #111827;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        nav {
+            display: flex;
+            gap: 12px;
+        }
+
+        nav a, nav button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 13px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--muted);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        nav a:hover, nav button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            transform: none;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        .page-title {
+            margin-bottom: 32px;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2.1rem;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin: 8px 0 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 14px;
+            padding: 24px;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: rgba(13, 110, 253, 0.28);
+            box-shadow: none;
+            transform: none;
+        }
+
+        .card h2 {
+            margin: 0 0 16px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card h2 i {
+            color: var(--primary);
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 12px 0 0;
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            background: rgba(13, 110, 253, 0.2);
+            border: 1px solid rgba(13, 110, 253, 0.4);
+            color: var(--primary);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: rgba(13, 110, 253, 0.28);
+            border-color: rgba(13, 110, 253, 0.45);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .table-section {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(14px);
+            margin-bottom: 32px;
+        }
+
+        .table-section h2 {
+            margin: 0 0 20px;
+            font-size: 1.35rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        td {
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        tr {
+            transition: background 0.2s ease;
+        }
+
+        tr:hover {
+            background: rgba(13, 110, 253, 0.08);
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.2);
+            margin-bottom: 16px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 32px;
+            width: min(500px, 90%);
+            box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:hover, textarea:hover, select:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.01);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), #0856ca);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+            pointer-events: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.35);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: var(--text);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+
+        .code-display {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(13, 110, 253, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-value {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .copy-btn {
+            background: rgba(13, 110, 253, 0.2);
+            border: 1px solid rgba(13, 110, 253, 0.4);
+            color: var(--primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .copy-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(13, 110, 253, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(13, 110, 253, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+        }
+
+        .copy-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        @media (max-width: 1200px) {
+            main {
+                padding: 0 20px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px 20px;
+            }
+
+            nav {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            nav a, nav button {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            main {
+                padding: 20px;
+                margin: 20px auto;
+            }
+
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .table-section {
+                padding: 18px;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+
+            .btn {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            .modal-content {
+                width: min(90%, 400px);
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 12px 16px;
+            }
+
+            .brand {
+                font-size: 1.15rem;
+            }
+
+            main {
+                padding: 16px;
+                margin: 16px auto;
+            }
+
+            .page-title h1 {
+                font-size: 1.35rem;
+                margin-bottom: 8px;
+            }
+
+            .page-title {
+                margin-bottom: 20px;
+            }
+
+            .card {
+                padding: 16px;
+                border-radius: 12px;
+            }
+
+            .card h2 {
+                font-size: 1.15rem;
+            }
+
+            .card-value {
+                font-size: 1.75rem;
+            }
+
+            .grid {
+                gap: 12px;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th {
+                padding: 8px 6px;
+            }
+
+            td {
+                padding: 8px 6px;
+            }
+
+            .btn {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+                gap: 4px;
+            }
+
+            .btn-group {
+                gap: 8px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px 16px;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            input, textarea, select {
+                padding: 10px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+
+    <script src="../../js/config.js" defer></script>
+    <script src="../../js/exam-utils.js"></script>
+    <script src="../../js/auth-service.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="brand">🎓 Smart Exam Platform</div>
+    <nav>
+        <a href="teacher-dashboard.html"><i class="fa-solid fa-home"></i> Dashboard</a>
+        <a href="#" onclick="openCreateClassModal(); return false;"><i class="fa-solid fa-plus"></i> Create Class</a>
+        <a href="#" onclick="openManageClassesModal(); return false;"><i class="fa-solid fa-list"></i> Manage Classes</a>
+        <button onclick="handleLogout()"><i class="fa-solid fa-sign-out-alt"></i> Logout</button>
+    </nav>
+</header>
+
+<main>
+    <div class="page-title">
+        <h1>Welcome back, <span id="teacherName">Teacher</span>!</h1>
+        <p class="subtitle">Manage your classes and exams</p>
+    </div>
+
+    <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); margin-bottom: 24px;">
+        <div class="card" style="cursor: default;">
+            <h2><i class="fa-solid fa-id-card"></i> Account Info</h2>
+            <div style="display: grid; gap: 10px; color: var(--muted);">
+                <div><strong style="color: var(--text);">Name:</strong> <span id="teacherAccountName">Teacher</span></div>
+                <div><strong style="color: var(--text);">Email:</strong> <span id="teacherAccountEmail">-</span></div>
+                <div><strong style="color: var(--text);">Role:</strong> <span id="teacherAccountRole">Teacher</span></div>
+            </div>
+            <button class="btn" style="margin-top: 18px;" onclick="window.location.href='teacher account.html'">
+                <i class="fa-solid fa-user"></i> View Account
+            </button>
+        </div>
+
+        <div class="card" style="cursor: default;">
+            <h2><i class="fa-solid fa-bell"></i> Quick Tip</h2>
+            <p style="color: var(--muted); line-height: 1.6; margin-bottom: 18px;">Use your account page to confirm your profile name and update it if the dashboard shows an old display name.</p>
+            <button class="btn" onclick="window.location.href='teacher account.html'">
+                <i class="fa-solid fa-pen-to-square"></i> Update Profile
+            </button>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2><i class="fa-solid fa-users"></i> Classes</h2>
+            <div class="card-value" id="classCount">0</div>
+            <p class="card-subtitle">Active classes created</p>
+            <button class="btn" onclick="openCreateClassModal()"><i class="fa-solid fa-plus"></i> Create New</button>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-file-pen"></i> Exams</h2>
+            <div class="card-value" id="examCount">0</div>
+            <p class="card-subtitle">Total exams created</p>
+            <button class="btn" onclick="window.location.href='teacher-exam-management.html'">
+                <i class="fa-solid fa-file-pen"></i> Create Exam
+            </button>
+        </div>
+
+        <div class="card">
+            <h2><i class="fa-solid fa-chart-bar"></i> Students</h2>
+            <div class="card-value" id="studentCount">0</div>
+            <p class="card-subtitle">Students across all classes</p>
+            <button class="btn"><i class="fa-solid fa-eye"></i> View Results</button>
+        </div>
+    </div>
+
+    <div class="table-section">
+        <h2><i class="fa-solid fa-users"></i> My Classes</h2>
+        <div id="classesContainer">
+            <div class="empty-state">
+                <div><i class="fa-solid fa-folder-open"></i></div>
+                <p>No classes yet. <a href="#" onclick="openCreateClassModal(); return false;" style="color: var(--primary); cursor: pointer;">Create your first class</a></p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Create Class Modal -->
+<div id="createClassModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fa-solid fa-plus"></i> Create New Class</h2>
+            <button class="close-btn" onclick="closeCreateClassModal()"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <form id="createClassForm" onsubmit="handleCreateClass(event)">
+            <div class="form-group">
+                <label>Class Name</label>
+                <input type="text" id="className" placeholder="e.g., Mathematics 101" required />
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="subject" placeholder="e.g., Mathematics" />
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="description" placeholder="Brief description of the class"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Batch Year</label>
+                <input type="number" id="batchYear" placeholder="e.g., 2024" />
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary"><i class="fa-solid fa-check"></i> Create Class</button>
+                <button type="button" class="btn-secondary" onclick="closeCreateClassModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentTeacher = null;
+    let currentClasses = [];
+
+    async function initPage() {
+        ExamUtils.showLoader('Loading dashboard...');
+        try {
+            const isAuth = await window.authService.isAuthenticated();
+            if (!isAuth) {
+                window.location.href = 'teacher.html';
+                return;
+            }
+
+            const role = await window.authService.getUserRole();
+            if (role !== 'teacher') {
+                window.location.href = 'teacher.html';
+                return;
+            }
+
+            currentTeacher = await window.authService.getCurrentUser();
+            const ensuredProfile = await window.authService.ensureProfileExists(currentTeacher, 'teacher');
+            const teacherDisplayName = window.authService.getDisplayName(currentTeacher, ensuredProfile);
+            document.getElementById('teacherName').textContent = teacherDisplayName;
+            document.getElementById('teacherAccountName').textContent = teacherDisplayName;
+            document.getElementById('teacherAccountEmail').textContent = currentTeacher?.email || ensuredProfile?.email || '-';
+            document.getElementById('teacherAccountRole').textContent = ensuredProfile?.role || currentTeacher?.user_metadata?.role || 'Teacher';
+
+            await loadTeacherClasses();
+            ExamUtils.hideLoader();
+        } catch (error) {
+            ExamUtils.hideLoader();
+            console.error('Init error:', error);
+            ExamUtils.showToast('Failed to load dashboard', 'error');
+        }
+    }
+
+    async function loadTeacherClasses() {
+        try {
+            const classes = await window.authService.getTeacherClasses(currentTeacher.id);
+            currentClasses = classes;
+            document.getElementById('classCount').textContent = classes.length;
+            
+            renderClassesTable(classes);
+        } catch (error) {
+            console.error('Load classes error:', error);
+            ExamUtils.showToast('Failed to load classes', 'error');
+        }
+    }
+
+    function renderClassesTable(classes) {
+        const container = document.getElementById('classesContainer');
+        
+        if (classes.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div><i class="fa-solid fa-folder-open"></i></div>
+                    <p>No classes yet. <a href="#" onclick="openCreateClassModal(); return false;" style="color: var(--primary); cursor: pointer;">Create your first class</a></p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<table><thead><tr><th>Class Name</th><th>Class Code</th><th>Subject</th><th>Students</th><th>Actions</th></tr></thead><tbody>';
+        
+        for (const cls of classes) {
+            html += `
+                <tr>
+                    <td><strong>${cls.class_name}</strong></td>
+                    <td><code style="background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 4px;">${cls.class_code}</code></td>
+                    <td>${cls.subject || '---'}</td>
+                    <td><span style="background: rgba(13, 110, 253, 0.2); padding: 4px 8px; border-radius: 4px; font-weight: 600;">0</span></td>
+                    <td>
+                        <button class="btn" style="padding: 6px 10px; font-size: 0.85rem;" onclick="copyClassCode('${cls.class_code}')">
+                            <i class="fa-solid fa-copy"></i> Copy Code
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function openCreateClassModal() {
+        document.getElementById('createClassModal').classList.add('show');
+    }
+
+    function closeCreateClassModal() {
+        document.getElementById('createClassModal').classList.remove('show');
+        document.getElementById('createClassForm').reset();
+    }
+
+    async function handleCreateClass(e) {
+        e.preventDefault();
+        
+        const name = document.getElementById('className').value;
+        const subject = document.getElementById('subject').value || null;
+        const description = document.getElementById('description').value || '';
+        const batchYear = document.getElementById('batchYear').value ? parseInt(document.getElementById('batchYear').value) : null;
+
+        ExamUtils.showLoader('Creating class...');
+
+        try {
+            const result = await window.authService.createClass(currentTeacher.id, name, subject, description, batchYear);
+            ExamUtils.hideLoader();
+
+            if (result.success) {
+                ExamUtils.showToast('Class created successfully!', 'success');
+                closeCreateClassModal();
+                await loadTeacherClasses();
+            } else {
+                ExamUtils.showToast(result.error || 'Failed to create class', 'error');
+            }
+        } catch (error) {
+            ExamUtils.hideLoader();
+            console.error('Create class error:', error);
+            ExamUtils.showToast('Failed to create class', 'error');
+        }
+    }
+
+    function copyClassCode(code) {
+        navigator.clipboard.writeText(code).then(() => {
+            ExamUtils.showToast('Class code copied to clipboard!', 'success');
+        }).catch(() => {
+            ExamUtils.showToast('Failed to copy code', 'error');
+        });
+    }
+
+    function openManageClassesModal() {
+        window.location.href = 'teacher-classes.html';
+    }
+
+    async function handleLogout() {
+        ExamUtils.showLoader('Logging out...');
+        try {
+            await window.authService.logout();
+            ExamUtils.hideLoader();
+            window.location.href = 'teacher.html';
+        } catch (error) {
+            ExamUtils.hideLoader();
+            console.error('Logout error:', error);
+            ExamUtils.showToast('Logout failed', 'error');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+
+</body>
+</html>
