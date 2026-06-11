@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join Class - Smart Exam</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../common/theme.css" />
+
+    <style>
+        :root {
+            --bg: #0b1220;
+            --panel: rgba(255, 255, 255, 0.08);
+            --panel-border: rgba(255, 255, 255, 0.16);
+            --text: #ebf2ff;
+            --muted: rgba(235, 242, 255, 0.7);
+            --primary: #0d6efd;
+            --success: #198754;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(circle at top, rgba(13, 110, 253, 0.45), transparent 55%),
+                linear-gradient(180deg, #081427 0%, #060a11 100%);
+            color: var(--text);
+        }
+
+        header {
+            background: rgba(7, 11, 23, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        nav a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: var(--muted);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(13, 110, 253, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+
+        nav a:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        .page-title h1 {
+            margin: 0 0 8px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin: 0 0 32px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(14px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(13, 110, 253, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(13, 110, 253, 0.35);
+            box-shadow: 0 8px 32px rgba(13, 110, 253, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card h2 {
+            margin: 0 0 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card h2 i {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .card p {
+            color: var(--muted);
+            margin: 12px 0;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: rgba(235, 242, 255, 0.5);
+        }
+
+        input:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.01);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), #0856ca);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(13, 110, 253, 0.35);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .class-preview {
+            background: rgba(13, 110, 253, 0.1);
+            border: 1px solid rgba(13, 110, 253, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            animation: slideInUp 0.3s ease;
+        }
+
+        .class-preview.show {
+            display: block;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .preview-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0 0 12px;
+        }
+
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .preview-item:last-child {
+            border-bottom: none;
+        }
+
+        .preview-label {
+            color: var(--muted);
+        }
+
+        .preview-value {
+            font-weight: 600;
+        }
+
+        .enrolled-classes {
+            margin-top: 40px;
+        }
+
+        .enrolled-classes h2 {
+            margin: 0 0 20px;
+            font-size: 1.35rem;
+        }
+
+        .class-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .class-item {
+            background: rgba(13, 110, 253, 0.1);
+            border: 1px solid rgba(13, 110, 253, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .class-item:hover {
+            background: rgba(13, 110, 253, 0.15);
+            border-color: rgba(13, 110, 253, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+        }
+
+        .class-info h3 {
+            margin: 0 0 4px;
+            font-size: 1.1rem;
+        }
+
+        .class-info p {
+            margin: 4px 0;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .class-action {
+            padding: 8px 16px;
+            background: rgba(13, 110, 253, 0.2);
+            border: 1px solid rgba(13, 110, 253, 0.4);
+            color: var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .class-action::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(13, 110, 253, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .class-action:hover {
+            background: rgba(13, 110, 253, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+        }
+
+        .class-action:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.2);
+            margin-bottom: 16px;
+        }
+
+        .hint {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 3px solid rgba(255, 193, 7, 0.5);
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: rgba(255, 193, 7, 0.9);
+        }
+
+        .error-msg {
+            background: rgba(220, 53, 69, 0.15);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #ff8b9e;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+            animation: slideInDown 0.3s ease;
+        }
+
+        .error-msg.show {
+            display: block;
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 16px 20px;
+            }
+
+            main {
+                padding: 20px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 24px 20px;
+            }
+
+            .class-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .class-info {
+                width: 100%;
+            }
+
+            .class-action {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 12px 16px;
+            }
+
+            .brand {
+                font-size: 1.15rem;
+            }
+
+            nav a {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+
+            main {
+                padding: 16px;
+                margin: 16px auto;
+            }
+
+            .page-title h1 {
+                font-size: 1.35rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+
+            .card {
+                padding: 20px 16px;
+                border-radius: 12px;
+            }
+
+            .form-group {
+                margin-bottom: 12px;
+            }
+
+            label {
+                font-size: 0.9rem;
+            }
+
+            input {
+                padding: 10px;
+                font-size: 0.95rem;
+            }
+
+            .btn {
+                padding: 10px;
+                font-size: 0.95rem;
+            }
+
+            .class-item {
+                padding: 12px;
+            }
+
+            .class-action {
+                font-size: 0.85rem;
+                padding: 6px 12px;
+            }
+
+            .hint {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+
+    <script src="../../js/config.js" defer></script>
+    <script src="../../js/exam-utils.js"></script>
+    <script src="../../js/auth-service.js"></script>
+</head>
+<body>
+
+<header>
+    <div class="brand">🎓 Smart Exam Platform</div>
+    <nav>
+        <a href="studenthome.html"><i class="fa-solid fa-home"></i> Dashboard</a>
+    </nav>
+</header>
+
+<main>
+    <div class="page-title">
+        <h1>Join a Class</h1>
+        <p class="subtitle">Enter the class code provided by your teacher</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h2><i class="fa-solid fa-door-open"></i> Enter Class Code</h2>
+            
+            <div class="error-msg" id="errorMsg"></div>
+
+            <form id="joinClassForm" onsubmit="handleJoinClass(event)">
+                <div class="form-group">
+                    <label>Class Code</label>
+                    <input type="text" id="classCode" placeholder="e.g., ABC123" maxlength="6" required />
+                    <div class="hint">
+                        <i class="fa-solid fa-circle-info"></i> Ask your teacher for the class code
+                    </div>
+                </div>
+
+                <button type="submit" class="btn">
+                    <i class="fa-solid fa-check"></i> Join Class
+                </button>
+
+                <div class="class-preview" id="classPreview">
+                    <div class="preview-title" id="previewName">Class Name</div>
+                    <div class="preview-item">
+                        <span class="preview-label">Subject:</span>
+                        <span class="preview-value" id="previewSubject">---</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">Teacher:</span>
+                        <span class="preview-value" id="previewTeacher">---</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-label">Status:</span>
+                        <span class="preview-value" id="previewStatus">Active</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="enrolled-classes">
+        <h2><i class="fa-solid fa-bookmark"></i> Your Classes</h2>
+        <div id="classesContainer">
+            <div class="empty-state">
+                <div><i class="fa-solid fa-inbox"></i></div>
+                <p>You haven't joined any classes yet.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    let currentStudent = null;
+
+    async function initPage() {
+        ExamUtils.showLoader('Loading...');
+        try {
+            const authService = window.authService;
+            const isAuth = await authService.isAuthenticated();
+            if (!isAuth) {
+                window.location.href = 'student.html';
+                return;
+            }
+
+            const role = await authService.getUserRole();
+            if (role !== 'student') {
+                window.location.href = 'student.html';
+                return;
+            }
+
+            currentStudent = await authService.getCurrentUser();
+            await loadEnrolledClasses();
+            ExamUtils.hideLoader();
+        } catch (error) {
+            ExamUtils.hideLoader();
+            console.error('Init error:', error);
+            ExamUtils.showToast('Failed to load page', 'error');
+        }
+    }
+
+    async function loadEnrolledClasses() {
+        try {
+            const classes = await authService.getStudentClasses(currentStudent.id);
+            renderEnrolledClasses(classes);
+        } catch (error) {
+            console.error('Load classes error:', error);
+        }
+    }
+
+    function renderEnrolledClasses(classes) {
+        const container = document.getElementById('classesContainer');
+        
+        if (classes.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div><i class="fa-solid fa-inbox"></i></div>
+                    <p>You haven't joined any classes yet.</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<div class="class-list">';
+        for (const cls of classes) {
+            html += `
+                <div class="class-item">
+                    <div class="class-info">
+                        <h3>${cls.class_name}</h3>
+                        <p><strong>Code:</strong> ${cls.class_code}</p>
+                        <p><strong>Subject:</strong> ${cls.subject || '---'}</p>
+                    </div>
+                    <button class="class-action" onclick="goToClass('${cls.id}')">
+                        <i class="fa-solid fa-arrow-right"></i> View
+                    </button>
+                </div>
+            `;
+        }
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    async function handleJoinClass(e) {
+        e.preventDefault();
+        
+        const code = document.getElementById('classCode').value.trim().toUpperCase();
+        const errorMsg = document.getElementById('errorMsg');
+        errorMsg.classList.remove('show');
+
+        if (!code) {
+            errorMsg.textContent = 'Please enter a class code';
+            errorMsg.classList.add('show');
+            return;
+        }
+
+        ExamUtils.showLoader('Joining class...');
+
+        try {
+            const result = await authService.joinClass(currentStudent.id, code);
+            ExamUtils.hideLoader();
+
+            if (result.success) {
+                ExamUtils.showToast('Successfully joined the class!', 'success');
+                document.getElementById('joinClassForm').reset();
+                document.getElementById('classPreview').classList.remove('show');
+                await loadEnrolledClasses();
+            } else {
+                errorMsg.textContent = result.error || 'Failed to join class';
+                errorMsg.classList.add('show');
+            }
+        } catch (error) {
+            ExamUtils.hideLoader();
+            console.error('Join class error:', error);
+            errorMsg.textContent = error.message || 'An error occurred';
+            errorMsg.classList.add('show');
+        }
+    }
+
+    async function previewClass() {
+        const code = document.getElementById('classCode').value.trim().toUpperCase();
+        if (!code || code.length < 3) return;
+
+        try {
+            const classData = await authService.getClassByCode(code);
+            if (classData) {
+                document.getElementById('previewName').textContent = classData.class_name;
+                document.getElementById('previewSubject').textContent = classData.subject || 'Not specified';
+                document.getElementById('classPreview').classList.add('show');
+            } else {
+                document.getElementById('classPreview').classList.remove('show');
+            }
+        } catch (error) {
+            console.error('Preview error:', error);
+        }
+    }
+
+    function goToClass(classId) {
+        alert('View class details feature coming soon');
+    }
+
+    document.getElementById('classCode').addEventListener('keyup', () => {
+        setTimeout(previewClass, 300);
+    });
+
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+
+</body>
+</html>

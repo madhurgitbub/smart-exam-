@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Account</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Vz9PZQF11BtbT5F01FJFiWuggMLjt3E1W3+E3ZwF+V8x+fdCjTBQHn0aczYXMdTa8QBuN0PpbDyXlP6LlXk8Hg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        :root {
+            --bg: #0b1220;
+            --panel: rgba(255, 255, 255, 0.08);
+            --panel-border: rgba(255, 255, 255, 0.16);
+            --text: #ebf2ff;
+            --muted: rgba(235, 242, 255, 0.7);
+            --primary: #0d6efd;
+            --primary-2: #6610f2;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, rgba(13, 110, 253, 0.45), transparent 55%),
+                linear-gradient(180deg, #081427 0%, #060a11 100%);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            background: rgba(7, 11, 23, 0.6);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--muted);
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 999px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-link::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(13, 110, 253, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+
+        .back-link:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        main {
+            flex: 1;
+            padding: 32px 24px;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2.1rem;
+        }
+
+        .subtitle {
+            margin: 10px 0 24px;
+            color: var(--muted);
+            max-width: 620px;
+        }
+
+        .profile-panel {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .profile-card {
+            background: var(--panel);
+            border: 1px solid var(--panel-border);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 18px 42px rgba(0, 0, 0, 0.32);
+            backdrop-filter: blur(14px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(13, 110, 253, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .profile-card:hover {
+            border-color: rgba(13, 110, 253, 0.35);
+            box-shadow: 0 18px 48px rgba(13, 110, 253, 0.2);
+        }
+
+        .profile-card:hover::before {
+            opacity: 1;
+        }
+
+        .avatar-wrap {
+            display: grid;
+            place-items: center;
+            width: 128px;
+            height: 128px;
+            border-radius: 50%;
+            margin: 0 auto 18px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-wrap:hover {
+            border-color: rgba(13, 110, 253, 0.5);
+            box-shadow: 0 0 20px rgba(13, 110, 253, 0.2);
+            transform: scale(1.05);
+        }
+
+        .avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-placeholder {
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .upload-btn {
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(13, 110, 253, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .upload-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .upload-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .upload-btn input {
+            display: none;
+        }
+
+        .detail-list {
+            display: grid;
+            gap: 14px;
+            margin: 18px 0 0;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            background: rgba(13, 110, 253, 0.1);
+            border-color: rgba(13, 110, 253, 0.3);
+        }
+
+        .detail-label {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .detail-value {
+            text-align: right;
+            font-weight: 700;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.26);
+            backdrop-filter: blur(14px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(13, 110, 253, 0.08) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .form-section:hover {
+            border-color: rgba(13, 110, 253, 0.3);
+        }
+
+        .form-section:hover::before {
+            opacity: 1;
+        }
+
+        .form-section h2 {
+            margin: 0 0 14px;
+            font-size: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        label {
+            display: grid;
+            gap: 8px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.09);
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:hover,
+        select:hover {
+            background: rgba(255, 255, 255, 0.11);
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+            border-color: rgba(13, 110, 253, 0.55);
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.01);
+        }
+
+        .form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            border-radius: 999px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: white;
+            box-shadow: 0 14px 30px rgba(9, 101, 212, 0.35);
+        }
+
+        .btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 36px rgba(9, 101, 212, 0.45);
+        }
+
+        .btn.primary:hover::before {
+            left: 100%;
+        }
+
+        .btn.secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: all 0.3s ease;
+        }
+
+        .btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.14);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 1200px) {
+            main {
+                padding: 24px;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .profile-panel {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 16px 20px;
+            }
+
+            .brand {
+                font-size: 1.25rem;
+            }
+
+            main {
+                padding: 16px;
+                margin: 0 auto;
+            }
+
+            .page-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .profile-card {
+                padding: 20px;
+            }
+
+            .avatar-wrap {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 14px;
+            }
+
+            .avatar-placeholder {
+                font-size: 2.5rem;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .form-section h2 {
+                font-size: 1.3rem;
+            }
+
+            .form-row {
+                gap: 12px;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 12px 16px;
+                gap: 8px;
+            }
+
+            .brand {
+                font-size: 1.15rem;
+            }
+
+            .back-link {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+
+            main {
+                padding: 12px;
+                margin: 0 auto;
+            }
+
+            .page-title h1 {
+                font-size: 1.3rem;
+                margin-bottom: 4px;
+            }
+
+            .subtitle {
+                font-size: 0.85rem;
+                margin-bottom: 16px;
+            }
+
+            .profile-card {
+                padding: 16px;
+                border-radius: 14px;
+            }
+
+            .avatar-wrap {
+                width: 90px;
+                height: 90px;
+                margin-bottom: 12px;
+            }
+
+            .avatar-placeholder {
+                font-size: 2rem;
+            }
+
+            .detail-item {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+
+            .detail-label,
+            .detail-value {
+                font-size: 0.85rem;
+            }
+
+            .form-section {
+                padding: 16px;
+                border-radius: 14px;
+                margin-top: 16px;
+            }
+
+            .form-section h2 {
+                font-size: 1.15rem;
+                margin-bottom: 12px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            label {
+                font-size: 0.9rem;
+                gap: 6px;
+            }
+
+            input,
+            select {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+                border-radius: 10px;
+            }
+
+            .form-actions {
+                gap: 10px;
+                margin-top: 16px;
+            }
+
+            .btn {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+                border-radius: 8px;
+            }
+
+            .upload-btn {
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../common/theme.css" />
+    <script src="../../js/config.js" defer></script>
+    <script src="../../js/exam-utils.js"></script>
+    <script src="../../js/auth-service.js"></script>
+</head>
+<body>
+
+<header>
+    <a href="studenthome.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to dashboard</a>
+    <div class="brand">Student Account</div>
+</header>
+
+<main>
+    <div class="page-title">
+        <div>
+            <h1>My Account</h1>
+            <p class="subtitle">Update your profile details, upload a photo, and manage your login credentials.</p>
+        </div>
+    </div>
+
+    <div class="profile-panel">
+        <section class="profile-card">
+            <div class="avatar-wrap" id="avatarWrap">
+                <div class="avatar-placeholder"><i class="fa-solid fa-user"></i></div>
+            </div>
+            <label class="upload-btn">
+                <i class="fa-solid fa-upload"></i>
+                Upload photo
+                <input type="file" accept="image/*" id="avatarInput" />
+            </label>
+
+            <div class="detail-list">
+                <div class="detail-item">
+                    <span class="detail-label">Name</span>
+                    <span class="detail-value" id="detailName">John Doe</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Student ID</span>
+                    <span class="detail-value" id="detailId">2023-001</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value" id="detailEmail">you@example.com</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2>Profile Settings</h2>
+            <form id="accountForm" autocomplete="off">
+                <div class="form-row">
+                    <label>
+                        Full name
+                        <input type="text" name="name" value="name" required />
+                    </label>
+                    <label>
+                        Student ID
+                        <input type="text" name="studentId" value="2023-001" required />
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label>
+                        Email address
+                        <input type="email" name="email" value="you@example.com" required />
+                    </label>
+                    <label>
+                        Phone
+                        <input type="tel" name="phone" placeholder="(123) 456-7890" />
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <label>
+                        Current password
+                        <input type="password" name="currentPassword" placeholder="••••••••" />
+                    </label>
+                    <label>
+                        New password
+                        <input type="password" name="newPassword" placeholder="••••••••" />
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn primary" type="submit">Save changes</button>
+                    <button class="btn secondary" type="button" id="resetBtn">Reset</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</main>
+
+<script>
+    let currentUser = null;
+
+    async function initPage() {
+        ExamUtils.showLoader('Loading profile...');
+        
+        try {
+            const isAuth = await authService.isAuthenticated();
+            if (!isAuth) {
+                ExamUtils.hideLoader();
+                ExamUtils.showToast('Please log in to continue', 'error');
+                window.location.href = 'student.html';
+                return;
+            }
+
+            currentUser = await authService.getCurrentUser();
+            
+            // Fetch fresh profile data from Supabase
+            if (currentUser) {
+                let profile = await authService.getUserProfile(currentUser.id);
+                if (!profile) {
+                    // Create profile if missing (older accounts or failed insert)
+                    const role = currentUser?.user_metadata?.role || 'student';
+                    await authService.createProfile(currentUser.id, currentUser.email, currentUser.user_metadata?.name || 'Student', role);
+                    profile = await authService.getUserProfile(currentUser.id);
+                }
+                if (profile) {
+                    currentUser = {
+                        ...currentUser,
+                        profile
+                    };
+                }
+                loadProfileData();
+            }
+            ExamUtils.hideLoader();
+        } catch (error) {
+            ExamUtils.hideLoader();
+            console.error('Init error:', error);
+            ExamUtils.showToast('Failed to load profile', 'error');
+        }
+    }
+
+    function loadProfileData() {
+        const detailName = document.getElementById('detailName');
+        const detailEmail = document.getElementById('detailEmail');
+        const detailId = document.getElementById('detailId');
+        const nameInput = document.querySelector('input[name="name"]');
+        const emailInput = document.querySelector('input[name="email"]');
+        const studentIdInput = document.querySelector('input[name="studentId"]');
+
+        // Prioritize profile data over user_metadata
+        const name = currentUser?.profile?.name || currentUser?.user_metadata?.name || currentUser?.email || 'Student';
+        const email = currentUser?.email || '';
+        const studentId = currentUser?.profile?.roll_no || currentUser?.profile?.id || '---';
+
+        detailName.textContent = name;
+        detailEmail.textContent = email;
+        detailId.textContent = studentId;
+        nameInput.value = name;
+        emailInput.value = email;
+        studentIdInput.value = studentId;
+    }
+
+    document.getElementById('accountForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name = document.querySelector('input[name="name"]').value;
+        const studentId = document.querySelector('input[name="studentId"]').value;
+        const newPassword = document.querySelector('input[name="newPassword"]').value;
+
+        ExamUtils.showLoader('Updating profile...');
+
+        try {
+            if (newPassword) {
+                const result = await authService.updatePassword(newPassword);
+                if (!result.success) {
+                    ExamUtils.hideLoader();
+                    ExamUtils.showToast('Failed to update password: ' + result.error, 'error');
+                    return;
+                }
+            }
+
+            const profileResult = await authService.updateProfile(currentUser.id, { name, roll_no: studentId });
+            ExamUtils.hideLoader();
+
+            if (profileResult.success) {
+                ExamUtils.showToast('Profile updated successfully!', 'success');
+                localStorage.setItem('smartexam_studentName', name);
+                document.querySelector('input[name="newPassword"]').value = '';
+            } else {
+                ExamUtils.showToast('Failed to update profile: ' + profileResult.error, 'error');
+            }
+        } catch (error) {
+            ExamUtils.hideLoader();
+            console.error('Update error:', error);
+            ExamUtils.showToast('Failed to update profile', 'error');
+        }
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        loadProfileData();
+        document.querySelector('input[name="newPassword"]').value = '';
+    });
+
+    document.getElementById('avatarInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                document.getElementById('avatarWrap').innerHTML = `<img src="${reader.result}" alt="Profile photo" />`;
+                ExamUtils.showToast('Photo updated', 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', initPage);
+</script>
+
+</body>
+</html>
